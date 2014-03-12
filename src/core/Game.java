@@ -140,6 +140,7 @@ public class Game implements ApplicationListener, Tickable {
 	@Override
 	public void tick() {
 		tickCount ++;
+		//The barrel spawing sucks, having trouble thinking of a better way to do it.
 		if (generator.nextInt((999-ScoreCounter.activeCounter.score())/10) == 0) {
 			new Barrel(Barrel.randomInt(50, (int)screenSize.y-50));
 		}

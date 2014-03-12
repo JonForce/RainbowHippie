@@ -92,6 +92,9 @@ public class RainbowHippie implements Renderable, Tickable {
 		assertOnScreen();
 	}
 	
+	/*
+	 * Sets the activeSpritesheet, srcX, width and height. 
+	 */
 	private void animate(int frames, Texture spriteSheet) {
 		if (frame >= frames-1)
 			frame = 0;
@@ -105,6 +108,10 @@ public class RainbowHippie implements Renderable, Tickable {
 		srcHeight = spriteSheet.getHeight();
 	}
 	
+	/*
+	 * Creates an upper and lower bounds of where the hippie is,
+	 * by checking if he is above the top or below the bottom. Called every frame.
+	 */
 	public void assertOnScreen() {
 		if (location.y >= (int)Game.screenSize.y-200) {
 			location.y = (int)Game.screenSize.y-200;
