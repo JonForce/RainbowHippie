@@ -79,6 +79,6 @@ public class Barrel implements Renderable, Tickable {
 	}
 	
 	public static float random(float min, float max) {
-		return  generator.nextInt((int)max-(int)min) + min + generator.nextFloat();
+		return generator.nextInt((int)max-(int)min) + min + generator.nextFloat();
 	}
 }

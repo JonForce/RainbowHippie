@@ -1,8 +1,7 @@
 package gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-
-import org.lwjgl.input.Mouse;
 
 import core.AssetManager;
 import core.Game;
@@ -46,11 +45,11 @@ public class StartSign extends GuiImage implements Tickable {
 	@Override
 	public void tick() {
 		//This logic gate will run the code within the "if (hasReleased)" statement once per click
-		if (Mouse.isButtonDown(0) && active) {
+		if (Gdx.input.isTouched() && active) {
 			if (hasReleased) {
 				//Check if the click was in the area of the screen that triggers the start of the game
-				if (Mouse.getX() >= Game.center.x-100 && Mouse.getX() <= Game.center.x+55 &&
-						Mouse.getY() >= Game.center.y-85 && Mouse.getY() <= Game.center.y-10) {
+				if (Gdx.input.getX() >= Game.center.x-100 && Gdx.input.getX() <= Game.center.x+55 &&
+						Game.screenSize.y - Gdx.input.getY() >= Game.center.y-85 && Game.screenSize.y - Gdx.input.getY() <= Game.center.y-10) {
 					//Start the game
 					Game.activeGame.startGame();
 				}

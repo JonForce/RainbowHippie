@@ -3,8 +3,7 @@ package core;
 import gui.GuiImage;
 import gui.StartSign;
 
-import org.lwjgl.input.Mouse;
-
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -65,7 +64,7 @@ public class RainbowHippie implements Renderable, Tickable {
 			sign.visible = false;
 			
 			//Deltas are the desired position-actualPosition
-			float deltaY = Mouse.getY()-(location.y+90);
+			float deltaY = Game.screenSize.y - Gdx.input.getY()-(location.y+90);
 			float deltaX = 150-(location.x+100);
 			//Amount to moves are the deltas*daming
 			float amountToMoveY = deltaY*damping;

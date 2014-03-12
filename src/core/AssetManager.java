@@ -13,6 +13,7 @@ public class AssetManager {
 	public static Texture sign;
 	public static Texture logo;
 	public static Texture font;
+	public static Texture pause;
 	
 	//Background images
 	public static Texture bg;
@@ -36,6 +37,7 @@ public class AssetManager {
 		sign = new Texture(Gdx.files.internal("assets/sprite/signfloat.png"));
 		logo = new Texture(Gdx.files.internal("assets/logo.png"));
 		font = new Texture(Gdx.files.internal("assets/sprite/font.png"));
+		pause = new Texture(Gdx.files.internal("assets/ui/pause.png"));
 		
 		bg = new Texture(Gdx.files.internal("assets/bg/bg.png"));
 		mountain = new Texture(Gdx.files.internal("assets/bg/mountain.png"));
