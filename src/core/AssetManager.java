@@ -2,7 +2,6 @@ package core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-
 public class AssetManager {
 	
 	//Hippie junk
@@ -13,6 +12,7 @@ public class AssetManager {
 	public static Texture sign;
 	public static Texture logo;
 	public static Texture font;
+	public static Texture pause;
 	public static Texture quitButton;
 	
 	//Background images
@@ -38,6 +38,8 @@ public class AssetManager {
 		sign = new Texture(Gdx.files.internal("assets/sprite/signfloat.png"));
 		logo = new Texture(Gdx.files.internal("assets/logo.png"));
 		font = new Texture(Gdx.files.internal("assets/sprite/font.png"));
+		pause = new Texture(Gdx.files.internal("assets/ui/pause.png"));
+
 		quitButton = new Texture(Gdx.files.internal("assets/ui/ragequit.png"));
 		
 		bg = new Texture(Gdx.files.internal("assets/bg/bg.png"));

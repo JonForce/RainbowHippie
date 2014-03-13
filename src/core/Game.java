@@ -1,5 +1,6 @@
 package core;
 
+import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
 
@@ -8,15 +9,9 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.imageio.ImageIO;
-
 import objects.Barrel;
-
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-
 import aesthetics.Background;
-import aesthetics.Partical;
+import aesthetics.RecursiveImage;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -48,6 +43,10 @@ public class Game implements ApplicationListener, Tickable {
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
 	
+	public ArrayList<Tickable> pausedTicked;
+	
+	public PauseSign pauseSign;
+
 	public QuitButton quitButton;
 	
 	public static void main(String[] args) {
@@ -69,84 +68,95 @@ public class Game implements ApplicationListener, Tickable {
 		hippie.lockedY = false;
 		hippie.sign.disable();
 		hippie.logo.fadeAway(.1f);
+		pauseSign = new PauseSign();
+		pauseSign.enable();
 		Background.startMovingClouds();
 	}
-	
+
 	@Override
 	public void create() {
-		//Initialization, same for all platforms
+		// Initialization, same for all platforms
 		activeGame = this;
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, (int)screenSize.x, (int)screenSize.y);
+		camera.setToOrtho(false, (int) screenSize.x, (int) screenSize.y);
 		batch = new SpriteBatch();
-		
+
 		toBeRendered = new ArrayList<Renderable>();
 		toBeTicked = new ArrayList<Tickable>();
-		
+		pausedTicked = new ArrayList<Tickable>();
+
 		Texture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		Background.load();
 		quitButton = new QuitButton();
 		toBeTicked.add(this);
-		
-		//Start animation thread
-    	clock = new Timer();
-    	clock.scheduleAtFixedRate(new TimerTask() {
-    		  @Override
-    		  public void run() {
-    			  for (int i = 0; i <= toBeTicked.size()-1; i ++) {
-    				  toBeTicked.get(i).tick();
-    			  }
-    		  }
-    	}, 0, 50);
-		
-    	//Create our hippie
+
+		// Start animation thread
+		clock = new Timer();
+		clock.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				for (int i = 0; i <= toBeTicked.size() - 1; i++) {
+					if(pauseSign != null) {
+						if(pauseSign.isPaused) { 
+							if(toBeTicked.get(i) instanceof PauseSign || toBeTicked.get(i) instanceof RecursiveImage){
+								toBeTicked.get(i).tick();
+							}
+						} else {
+							toBeTicked.get(i).tick();
+						}
+					} else {
+						toBeTicked.get(i).tick();
+					}
+				}
+			}
+		}, 0, 50);
+
+		// Create our hippie
 		hippie = new RainbowHippie();
-		
-		//********************TESTING**********************
-		
+
+		// ********************TESTING**********************
+
 	}
-	
+
 	@Override
 	public void dispose() {
 		clock.cancel();
 	}
-	
+
 	@Override
 	public void pause() {
-		
 	}
-	
+
 	@Override
 	public void resume() {
-		
 	}
-	
+
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
-		
+
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		
-		for (int i = 0; i <= toBeRendered.size()-1; i ++) {
+
+		for (int i = 0; i <= toBeRendered.size() - 1; i++) {
 			toBeRendered.get(i).render();
 		}
-		
+
 		batch.end();
 	}
-	
+
 	@Override
-	public void resize(int x, int y) {	}
+	public void resize(int x, int y) {
+	}
 
 	@Override
 	public void tick() {
-		tickCount ++;
-		//The barrel spawing sucks, having trouble thinking of a better way to do it.
-		if (generator.nextInt((999-ScoreCounter.activeCounter.score())/10) == 0) {
-			new Barrel(Barrel.randomInt(50, (int)screenSize.y-50));
+		tickCount++;
+		if (generator.nextInt((999 - ScoreCounter.activeCounter.score()) / 10) == 0) {
+			new Barrel(Barrel.randomInt(50, (int) screenSize.y - 50));
 		}
 	}
 }

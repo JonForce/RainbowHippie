@@ -1,11 +1,10 @@
 package aesthetics;
 
+import gui.GuiImage;
+
 import com.badlogic.gdx.math.Vector2;
 
 import core.AssetManager;
-import core.Game;
-
-import gui.GuiImage;
 
 public class Background {
 	
