@@ -8,8 +8,6 @@ import core.Renderable;
 
 public class ScoreCounter implements Renderable {
 	
-	public static ScoreCounter activeCounter = new ScoreCounter();
-	
 	//Considers first to be smallest valued digit, second second smallest valued digit and so on.
 	public int scoreFirstDigit = 1;
 	public int scoreSecondDigit = 0;
@@ -50,6 +48,12 @@ public class ScoreCounter implements Renderable {
 			Game.activeGame.batch.draw(font, 10, Game.screenSize.y-font.getHeight()-10,
 					(scoreThirdDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
 		}
+	}
+	
+	public void reset() {
+		scoreFirstDigit = 1;
+		scoreSecondDigit = 0;
+		scoreThirdDigit = 0;
 	}
 	
 	public int score() {

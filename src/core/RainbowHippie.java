@@ -1,5 +1,6 @@
 package core;
 
+import objects.FlyingBodyPart;
 import gui.GuiImage;
 import gui.StartSign;
 
@@ -19,11 +20,13 @@ public class RainbowHippie implements Renderable, Tickable {
 	
 	//Other immutables
 	public final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth()/7, AssetManager.fly.getHeight());
+	public final int delayAfterDeath = 50;
 	
 	//Rendering
 	public Texture activeTexture;
 	public int srcX, srcY, srcWidth, srcHeight;
 	public int state = HOLDING;
+	public boolean isDead = false;
 	private int frame = 0;
 	public StartSign sign = new StartSign();
 	public GuiImage logo = new GuiImage(AssetManager.logo, new Vector2(Game.center.x-(AssetManager.logo.getWidth()/2), Game.center.y));
@@ -49,8 +52,9 @@ public class RainbowHippie implements Renderable, Tickable {
 	
 	@Override
 	public void render() {
-		Game.activeGame.batch.draw(activeTexture, location.x, location.y,
-									srcX, srcY, srcWidth, srcHeight);
+		if (state != HIDDEN)
+			Game.activeGame.batch.draw(activeTexture, location.x, location.y,
+										srcX, srcY, srcWidth, srcHeight);
 	}
 	
 	@Override
@@ -85,11 +89,28 @@ public class RainbowHippie implements Renderable, Tickable {
 			lockedY = true;
 			location = Game.startPosition;
 		} else if (state == HIDDEN) {
-			
+			//Uses the frame as a timer to wait the delay before displaying the death screen
+			if (frame >= delayAfterDeath) {
+				
+			} else {
+				frame ++;
+			}
 		}
 		
 		//Assert that our hippie does not leave the playing area
 		assertOnScreen();
+	}
+	
+	public void die() {
+		new FlyingBodyPart(new Vector2(location.x, location.y+50), FlyingBodyPart.HEAD).velocity = new Vector2(-5, 10);
+		new FlyingBodyPart(new Vector2(location.x, location.y+10), FlyingBodyPart.BODY).torque = 5f;
+		new FlyingBodyPart(new Vector2(location.x+20, location.y+10), FlyingBodyPart.ARM).velocity = new Vector2(-10, 5);
+		new FlyingBodyPart(new Vector2(location.x+5, location.y+10), FlyingBodyPart.ARM).velocity = new Vector2(-6, 3);
+		new FlyingBodyPart(new Vector2(location.x+5, location.y), FlyingBodyPart.LEG).velocity = new Vector2(-10, -5);
+		new FlyingBodyPart(new Vector2(location.x+15, location.y), FlyingBodyPart.LEG).velocity = new Vector2(-10, -5);
+		state = HIDDEN;
+		frame = 0;
+		isDead = true;
 	}
 	
 	/*

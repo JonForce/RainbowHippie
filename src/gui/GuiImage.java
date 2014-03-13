@@ -23,9 +23,15 @@ public class GuiImage implements Renderable, Tickable {
 		Game.activeGame.toBeRendered.add(this);
 	}
 	
+	public GuiImage() { }
+	
 	public void fadeAway(float rate) {
 		fadingRate = rate;
 		Game.activeGame.toBeTicked.add(this);
+	}
+	
+	public void dispose() {
+		Game.activeGame.toBeRendered.remove(this);
 	}
 	
 	@Override

@@ -1,5 +1,6 @@
 package core;
 
+import gui.PauseMenu;
 import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
@@ -10,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import objects.Barrel;
+import objects.FlyingBodyPart;
 import aesthetics.Background;
 import aesthetics.RecursiveImage;
 
@@ -18,6 +20,7 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,12 +29,13 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Game implements ApplicationListener, Tickable {
 	
+	public static boolean hasFinishedIntro = true;
 	public static final Vector2 screenSize = new Vector2(1200, 700);
 	public static final Vector2 startPosition = new Vector2((Game.screenSize.x/2)-200,(Game.screenSize.y/2)-200);
 	public static final Vector2 center = new Vector2((Game.screenSize.x/2),(Game.screenSize.y/2));
 	public static Game activeGame;
-	
 	public static Random generator = new Random();
+	public static FPSLogger logger = new FPSLogger();
 	
 	private Timer clock;
 	private int tickCount = 0;
@@ -39,17 +43,18 @@ public class Game implements ApplicationListener, Tickable {
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
+	public boolean isPaused = false;
 	
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
-	
 	public ArrayList<Tickable> pausedTicked;
 	
 	public PauseSign pauseSign;
 	public QuitButton quitButton;
+	public ScoreCounter scoreCounter;
 	
 	public static void main(String[] args) {
-		//Use the desktop configuration
+		// Use the desktop configuration
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Rainbow Hippie";
 		cfg.width = (int)screenSize.x;
@@ -61,16 +66,41 @@ public class Game implements ApplicationListener, Tickable {
 		new LwjglApplication(new Game(), cfg);
 	}
 	
-	public void startGame() {
+	public void start() {
 		hippie.state = RainbowHippie.FLYING;
 		hippie.lockedX = false;
 		hippie.lockedY = false;
 		hippie.sign.disable();
 		hippie.logo.fadeAway(.1f);
 		pauseSign = new PauseSign();
+		quitButton = new QuitButton();
+		scoreCounter = new ScoreCounter();
 		Background.startMovingClouds();
+		AssetManager.bgMusic.play();
+		
+		toBeTicked.add(this);
 	}
-
+	
+	public void restart() {
+		scoreCounter.reset();
+	}
+	
+	public void quit() {
+		Gdx.app.exit();
+	}
+	
+	@Override
+	public void pause() {
+		isPaused = true;
+		AssetManager.bgMusic.pause();
+	}
+	
+	@Override
+	public void resume() {
+		isPaused = false;
+		AssetManager.bgMusic.play();
+	}
+	
 	@Override
 	public void create() {
 		// Initialization, same for all platforms
@@ -86,25 +116,24 @@ public class Game implements ApplicationListener, Tickable {
 		Texture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		Background.load();
-		quitButton = new QuitButton();
-		toBeTicked.add(this);
-
+		
 		// Start animation thread
 		clock = new Timer();
 		clock.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
 				for (int i = 0; i <= toBeTicked.size() - 1; i++) {
+					Tickable t = toBeTicked.get(i);
 					if(pauseSign != null) {
-						if(pauseSign.isPaused) { 
-							if(toBeTicked.get(i) instanceof PauseSign || toBeTicked.get(i) instanceof RecursiveImage){
-								toBeTicked.get(i).tick();
+						if(isPaused) { 
+							if(pausedTicked.contains(t)){
+								t.tick();
 							}
 						} else {
-							toBeTicked.get(i).tick();
+							t.tick();
 						}
 					} else {
-						toBeTicked.get(i).tick();
+						t.tick();
 					}
 				}
 			}
@@ -112,6 +141,9 @@ public class Game implements ApplicationListener, Tickable {
 
 		// Create our hippie
 		hippie = new RainbowHippie();
+		
+		//**********************
+		//RainbowRay.load();
 	}
 
 	@Override
@@ -120,26 +152,20 @@ public class Game implements ApplicationListener, Tickable {
 	}
 
 	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
-	}
-
-	@Override
 	public void render() {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
-
+		
+		logger.log();
+		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-
+		
 		for (int i = 0; i <= toBeRendered.size() - 1; i++) {
 			toBeRendered.get(i).render();
 		}
-
+		//RainbowRay.render(1);
 		batch.end();
 	}
 
@@ -150,7 +176,8 @@ public class Game implements ApplicationListener, Tickable {
 	@Override
 	public void tick() {
 		tickCount++;
-		if (generator.nextInt((999 - ScoreCounter.activeCounter.score()) / 10) == 0) {
+		//The barrel spawning needs work, its pretty terrible right now
+		if (generator.nextInt((999 - scoreCounter.score()) / 10) == 0 && !hippie.isDead) {
 			new Barrel(Barrel.randomInt(50, (int) screenSize.y - 50));
 		}
 	}

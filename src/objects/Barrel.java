@@ -65,13 +65,15 @@ public class Barrel implements Renderable, Tickable {
 		if (boundingBox.overlaps(RainbowHippie.activeHippie.boundingBox)) {
 			Game.activeGame.toBeTicked.remove(this);
 			Game.activeGame.toBeRendered.remove(this);
+			RainbowHippie.activeHippie.die();
 		}
 		
 		//Dispose if out of screen
 		if (location.x < -100) {
 			Game.activeGame.toBeTicked.remove(this);
 			Game.activeGame.toBeRendered.remove(this);
-			ScoreCounter.activeCounter.addOne();
+			//This a temorary thing, to allow the testing of score. You wont get points for this in the real game.
+			Game.activeGame.scoreCounter.addOne();
 		}
 	}
 	

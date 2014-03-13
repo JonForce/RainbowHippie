@@ -11,10 +11,11 @@ public class PauseSign extends GuiImage implements Tickable {
 	
 	public boolean hasReleased = true;
 	public boolean active = true;
-	public boolean isPaused = false;
+	
+	public PauseMenu activePauseMenu;
 
 	public PauseSign() {
-		super(AssetManager.pause, new Vector2(Game.screenSize.x - 75, Game.screenSize.y - 65));
+		super(AssetManager.pause, new Vector2(Game.screenSize.x - 62, Game.screenSize.y - 63));
 		Game.activeGame.toBeTicked.add(this);
 	}
 
@@ -41,7 +42,14 @@ public class PauseSign extends GuiImage implements Tickable {
 			if(hasReleased) {
 				if(Gdx.input.getX() >= location.x && Gdx.input.getX() <= location.x + texture.getWidth() &&
 						Game.screenSize.y - Gdx.input.getY() >= location.y && Game.screenSize.y - Gdx.input.getY() <= location.y + texture.getHeight()) {
-					isPaused = !isPaused;
+					if (!Game.activeGame.isPaused) {
+						Game.activeGame.pause();
+						activePauseMenu = new PauseMenu();
+					} else {
+						assert activePauseMenu != null;
+						Game.activeGame.resume();
+						activePauseMenu.dispose();
+					}
 				}
 			}
 			hasReleased = false;
