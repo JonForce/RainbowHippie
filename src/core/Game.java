@@ -1,5 +1,6 @@
 package core;
 
+import gui.QuitButton;
 import gui.ScoreCounter;
 
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class Game implements ApplicationListener, Tickable {
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
 	
+	public QuitButton quitButton;
+	
 	public static void main(String[] args) {
 		//Use the desktop configuration
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
@@ -83,6 +86,7 @@ public class Game implements ApplicationListener, Tickable {
 		Texture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		Background.load();
+		quitButton = new QuitButton();
 		toBeTicked.add(this);
 		
 		//Start animation thread

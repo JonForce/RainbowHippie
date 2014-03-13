@@ -19,7 +19,7 @@ public class RainbowHippie implements Renderable, Tickable {
 	public static final int HOLDING = 2;
 	
 	//Other immutables
-	public static final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth()/7, AssetManager.fly.getHeight());
+	public final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth()/7, AssetManager.fly.getHeight());
 	
 	//Rendering
 	public Texture activeTexture;
@@ -28,6 +28,7 @@ public class RainbowHippie implements Renderable, Tickable {
 	private int frame = 0;
 	public StartSign sign = new StartSign();
 	public GuiImage logo = new GuiImage(AssetManager.logo, new Vector2(Game.center.x-(AssetManager.logo.getWidth()/2), Game.center.y));
+	private RainbowRay rainbowRay;
 	
 	//Positional and movement
 	public Vector2 location;

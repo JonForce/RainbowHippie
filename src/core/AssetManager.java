@@ -13,6 +13,7 @@ public class AssetManager {
 	public static Texture sign;
 	public static Texture logo;
 	public static Texture font;
+	public static Texture quitButton;
 	
 	//Background images
 	public static Texture bg;
@@ -28,6 +29,7 @@ public class AssetManager {
 	
 	//Effects
 	public static Texture gasTrail;
+	public static Texture rainbow;
 	
 	public static void loadAssets() {
 		fly = new Texture(Gdx.files.internal("assets/sprite/fly.png"));
@@ -36,6 +38,7 @@ public class AssetManager {
 		sign = new Texture(Gdx.files.internal("assets/sprite/signfloat.png"));
 		logo = new Texture(Gdx.files.internal("assets/logo.png"));
 		font = new Texture(Gdx.files.internal("assets/sprite/font.png"));
+		quitButton = new Texture(Gdx.files.internal("assets/ui/ragequit.png"));
 		
 		bg = new Texture(Gdx.files.internal("assets/bg/bg.png"));
 		mountain = new Texture(Gdx.files.internal("assets/bg/mountain.png"));
@@ -45,7 +48,9 @@ public class AssetManager {
 		cloudC = new Texture(Gdx.files.internal("assets/bg/cloud02.png"));
 		
 		barrel = new Texture(Gdx.files.internal("assets/sprite/barrel.png"));
+		balloon = new Texture(Gdx.files.internal("assets/sprite/barrel.png"));
 		
 		gasTrail = new Texture(Gdx.files.internal("assets/sprite/Gas_Trail.png"));
+		rainbow = new Texture(Gdx.files.internal("assets/sprite/rainbow.png"));
 	}
 }
