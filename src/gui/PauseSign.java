@@ -14,7 +14,7 @@ public class PauseSign extends GuiImage implements Tickable {
 	public boolean isPaused = false;
 
 	public PauseSign() {
-		super(AssetManager.pause, new Vector2(Game.center.x - (AssetManager.pause.getWidth() / 2), Game.screenSize.y - 60));
+		super(AssetManager.pause, new Vector2(Game.screenSize.x - 62, Game.screenSize.y - 63));
 		Game.activeGame.toBeTicked.add(this);
 	}
 
