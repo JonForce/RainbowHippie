@@ -9,8 +9,8 @@ import core.Tickable;
 
 public class PauseSign extends GuiImage implements Tickable {
 	
-	public boolean hasReleased = false;
-	public boolean active = false;
+	public boolean hasReleased = true;
+	public boolean active = true;
 	public boolean isPaused = false;
 
 	public PauseSign() {
@@ -30,7 +30,7 @@ public class PauseSign extends GuiImage implements Tickable {
 	
 	@Override
 	public void render() {
-		//if visible, render the texture (AssetManager.pause) at the specified location with the entire width and height of the texture because it is not animated
+		//If visible, render the texture (AssetManager.pause) at the specified location with the entire width and height of the texture because it is not animated
 		if(visible) 
 			Game.activeGame.batch.draw(texture, location.x, location.y, 0, 0, texture.getWidth(), texture.getHeight());
 	}

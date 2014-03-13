@@ -46,7 +46,6 @@ public class Game implements ApplicationListener, Tickable {
 	public ArrayList<Tickable> pausedTicked;
 	
 	public PauseSign pauseSign;
-
 	public QuitButton quitButton;
 	
 	public static void main(String[] args) {
@@ -69,7 +68,6 @@ public class Game implements ApplicationListener, Tickable {
 		hippie.sign.disable();
 		hippie.logo.fadeAway(.1f);
 		pauseSign = new PauseSign();
-		pauseSign.enable();
 		Background.startMovingClouds();
 	}
 
@@ -114,9 +112,6 @@ public class Game implements ApplicationListener, Tickable {
 
 		// Create our hippie
 		hippie = new RainbowHippie();
-
-		// ********************TESTING**********************
-
 	}
 
 	@Override
