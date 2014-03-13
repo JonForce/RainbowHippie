@@ -142,8 +142,7 @@ public class Game implements ApplicationListener, Tickable {
 		// Create our hippie
 		hippie = new RainbowHippie();
 		
-		//**********************
-		//RainbowRay.load();
+		RainbowRay.load();
 	}
 
 	@Override
@@ -165,7 +164,7 @@ public class Game implements ApplicationListener, Tickable {
 		for (int i = 0; i <= toBeRendered.size() - 1; i++) {
 			toBeRendered.get(i).render();
 		}
-		//RainbowRay.render(1);
+		
 		batch.end();
 	}
 

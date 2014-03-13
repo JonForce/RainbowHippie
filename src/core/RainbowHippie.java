@@ -5,6 +5,7 @@ import gui.GuiImage;
 import gui.StartSign;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -26,15 +27,15 @@ public class RainbowHippie implements Renderable, Tickable {
 	public Texture activeTexture;
 	public int srcX, srcY, srcWidth, srcHeight;
 	public int state = HOLDING;
-	public boolean isDead = false;
+	public boolean isDead = false, isRainbowing = false;
 	private int frame = 0;
 	public StartSign sign = new StartSign();
 	public GuiImage logo = new GuiImage(AssetManager.logo, new Vector2(Game.center.x-(AssetManager.logo.getWidth()/2), Game.center.y));
-	private RainbowRay rainbowRay;
 	
 	//Positional and movement
 	public Vector2 location;
 	public float damping = .15f;
+	private float rainbowBendModifier = 0;
 	public boolean lockedX = false;
 	public boolean lockedY = false;
 	
@@ -52,15 +53,21 @@ public class RainbowHippie implements Renderable, Tickable {
 	
 	@Override
 	public void render() {
-		if (state != HIDDEN)
+		if (state != HIDDEN) {
 			Game.activeGame.batch.draw(activeTexture, location.x, location.y,
 										srcX, srcY, srcWidth, srcHeight);
+			if (isRainbowing)
+				RainbowRay.render((rainbowBendModifier/Game.screenSize.y/1000), new Vector2(location.x+130, (location.y-(Game.screenSize.y/2))+150));
+		}
 	}
 	
 	@Override
 	public void tick() {
 		//Move bounding box to the center of our hippie
 		boundingBox.setCenter(new Vector2(location.x+hippieSize.x/2, location.y+hippieSize.y/2));
+		
+		//Check to see if we should be rainbowing (Keys.SPACE == the mouse left click for some reason?)
+		isRainbowing = Gdx.input.isButtonPressed(Keys.SPACE) ? true : false;
 		
 		//Update based on state
 		if (state == FLYING) {
@@ -71,14 +78,18 @@ public class RainbowHippie implements Renderable, Tickable {
 			//Deltas are the desired position-actualPosition
 			float deltaY = Game.screenSize.y - Gdx.input.getY()-(location.y+90);
 			float deltaX = 150-(location.x+100);
+			
 			//Amount to moves are the deltas*daming
 			float amountToMoveY = deltaY*damping;
 			float amountToMoveX = deltaX*(damping/4);
+			
 			//Move by the amount to move
 			if (!lockedX)
 				location.x += amountToMoveX;
 			if (!lockedY)
 				location.y += amountToMoveY;
+			
+			rainbowBendModifier = deltaY;
 		} else if (state == HOLDING) {
 			animate(7, AssetManager.flyHold);
 			sign.useFrame(frame);
