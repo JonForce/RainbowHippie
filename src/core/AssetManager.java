@@ -2,7 +2,6 @@ package core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-
 public class AssetManager {
 	
 	//Hippie junk
@@ -14,6 +13,7 @@ public class AssetManager {
 	public static Texture logo;
 	public static Texture font;
 	public static Texture pause;
+	public static Texture quitButton;
 	
 	//Background images
 	public static Texture bg;
@@ -29,6 +29,7 @@ public class AssetManager {
 	
 	//Effects
 	public static Texture gasTrail;
+	public static Texture rainbow;
 	
 	public static void loadAssets() {
 		fly = new Texture(Gdx.files.internal("assets/sprite/fly.png"));
@@ -38,6 +39,8 @@ public class AssetManager {
 		logo = new Texture(Gdx.files.internal("assets/logo.png"));
 		font = new Texture(Gdx.files.internal("assets/sprite/font.png"));
 		pause = new Texture(Gdx.files.internal("assets/ui/pause.png"));
+
+		quitButton = new Texture(Gdx.files.internal("assets/ui/ragequit.png"));
 		
 		bg = new Texture(Gdx.files.internal("assets/bg/bg.png"));
 		mountain = new Texture(Gdx.files.internal("assets/bg/mountain.png"));
@@ -47,7 +50,9 @@ public class AssetManager {
 		cloudC = new Texture(Gdx.files.internal("assets/bg/cloud02.png"));
 		
 		barrel = new Texture(Gdx.files.internal("assets/sprite/barrel.png"));
+		balloon = new Texture(Gdx.files.internal("assets/sprite/barrel.png"));
 		
 		gasTrail = new Texture(Gdx.files.internal("assets/sprite/Gas_Trail.png"));
+		rainbow = new Texture(Gdx.files.internal("assets/sprite/rainbow.png"));
 	}
 }

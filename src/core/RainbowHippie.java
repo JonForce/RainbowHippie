@@ -18,7 +18,7 @@ public class RainbowHippie implements Renderable, Tickable {
 	public static final int HOLDING = 2;
 	
 	//Other immutables
-	public static final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth()/7, AssetManager.fly.getHeight());
+	public final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth()/7, AssetManager.fly.getHeight());
 	
 	//Rendering
 	public Texture activeTexture;
@@ -27,6 +27,7 @@ public class RainbowHippie implements Renderable, Tickable {
 	private int frame = 0;
 	public StartSign sign = new StartSign();
 	public GuiImage logo = new GuiImage(AssetManager.logo, new Vector2(Game.center.x-(AssetManager.logo.getWidth()/2), Game.center.y));
+	private RainbowRay rainbowRay;
 	
 	//Positional and movement
 	public Vector2 location;
@@ -91,6 +92,9 @@ public class RainbowHippie implements Renderable, Tickable {
 		assertOnScreen();
 	}
 	
+	/*
+	 * Sets the activeSpritesheet, srcX, width and height. 
+	 */
 	private void animate(int frames, Texture spriteSheet) {
 		if (frame >= frames-1)
 			frame = 0;
@@ -104,6 +108,10 @@ public class RainbowHippie implements Renderable, Tickable {
 		srcHeight = spriteSheet.getHeight();
 	}
 	
+	/*
+	 * Creates an upper and lower bounds of where the hippie is,
+	 * by checking if he is above the top or below the bottom. Called every frame.
+	 */
 	public void assertOnScreen() {
 		if (location.y >= (int)Game.screenSize.y-200) {
 			location.y = (int)Game.screenSize.y-200;

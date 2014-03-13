@@ -1,6 +1,7 @@
 package core;
 
 import gui.PauseSign;
+import gui.QuitButton;
 import gui.ScoreCounter;
 
 import java.util.ArrayList;
@@ -24,23 +25,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Game implements ApplicationListener, Tickable {
-
+	
 	public static final Vector2 screenSize = new Vector2(1200, 700);
-	public static final Vector2 startPosition = new Vector2(
-			(Game.screenSize.x / 2) - 200, (Game.screenSize.y / 2) - 200);
-	public static final Vector2 center = new Vector2((Game.screenSize.x / 2),
-			(Game.screenSize.y / 2));
+	public static final Vector2 startPosition = new Vector2((Game.screenSize.x/2)-200,(Game.screenSize.y/2)-200);
+	public static final Vector2 center = new Vector2((Game.screenSize.x/2),(Game.screenSize.y/2));
 	public static Game activeGame;
-
+	
 	public static Random generator = new Random();
-
+	
 	private Timer clock;
 	private int tickCount = 0;
-
+	
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
-
+	
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
 	
@@ -48,19 +47,21 @@ public class Game implements ApplicationListener, Tickable {
 	
 	public PauseSign pauseSign;
 
+	public QuitButton quitButton;
+	
 	public static void main(String[] args) {
-		// Use the desktop configuration
+		//Use the desktop configuration
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Rainbow Hippie";
-		cfg.width = (int) screenSize.x;
-		cfg.height = (int) screenSize.y;
+		cfg.width = (int)screenSize.x;
+		cfg.height = (int)screenSize.y;
 		cfg.resizable = false;
 		cfg.addIcon("assets/website_icon.png", FileType.Internal);
 		cfg.addIcon("assets/taskbar_icon.png", FileType.Internal);
 		cfg.addIcon("assets/window_icon.png", FileType.Internal);
 		new LwjglApplication(new Game(), cfg);
 	}
-
+	
 	public void startGame() {
 		hippie.state = RainbowHippie.FLYING;
 		hippie.lockedX = false;
@@ -87,6 +88,7 @@ public class Game implements ApplicationListener, Tickable {
 		Texture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		Background.load();
+		quitButton = new QuitButton();
 		toBeTicked.add(this);
 
 		// Start animation thread

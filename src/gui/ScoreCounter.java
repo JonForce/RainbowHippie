@@ -10,7 +10,7 @@ public class ScoreCounter implements Renderable {
 	
 	public static ScoreCounter activeCounter = new ScoreCounter();
 	
-	//Considers first to be smallest, second second smallest and so on
+	//Considers first to be smallest valued digit, second second smallest valued digit and so on.
 	public int scoreFirstDigit = 1;
 	public int scoreSecondDigit = 0;
 	public int scoreThirdDigit = 0;

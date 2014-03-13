@@ -61,12 +61,13 @@ public class Barrel implements Renderable, Tickable {
 		//Update rotation
 		rotation += torque;
 		
+		//Collision check
 		if (boundingBox.overlaps(RainbowHippie.activeHippie.boundingBox)) {
 			Game.activeGame.toBeTicked.remove(this);
 			Game.activeGame.toBeRendered.remove(this);
 		}
 		
-		//Disose after certain amount of time
+		//Dispose if out of screen
 		if (location.x < -100) {
 			Game.activeGame.toBeTicked.remove(this);
 			Game.activeGame.toBeRendered.remove(this);
