@@ -108,11 +108,11 @@ public class Game implements ApplicationListener, Tickable {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (int) screenSize.x, (int) screenSize.y);
 		batch = new SpriteBatch();
-
+		
 		toBeRendered = new ArrayList<Renderable>();
 		toBeTicked = new ArrayList<Tickable>();
 		pausedTicked = new ArrayList<Tickable>();
-
+		
 		Texture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		Background.load();
@@ -138,7 +138,7 @@ public class Game implements ApplicationListener, Tickable {
 				}
 			}
 		}, 0, 50);
-
+		
 		// Create our hippie
 		hippie = new RainbowHippie();
 		
