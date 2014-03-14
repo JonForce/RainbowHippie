@@ -60,7 +60,7 @@ public class AssetManager {
 		cloudC = new Texture(Gdx.files.internal("assets/bg/cloud02.png"));
 		
 		barrel = new Texture(Gdx.files.internal("assets/sprite/barrel.png"));
-		balloon = new Texture(Gdx.files.internal("assets/sprite/barrel.png"));
+		balloon = new Texture(Gdx.files.internal("assets/sprite/balloon.png"));
 		
 		gasTrail = new Texture(Gdx.files.internal("assets/sprite/Gas_Trail.png"));
 		rainbow = new Texture(Gdx.files.internal("assets/sprite/rainbow.png"));

@@ -1,6 +1,5 @@
 package core;
 
-import gui.PauseMenu;
 import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
@@ -10,20 +9,23 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import objects.Balloon;
 import objects.Barrel;
-import objects.FlyingBodyPart;
+
+import org.lwjgl.input.Keyboard;
+
 import aesthetics.Background;
-import aesthetics.RecursiveImage;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -108,12 +110,12 @@ public class Game implements ApplicationListener, Tickable {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (int) screenSize.x, (int) screenSize.y);
 		batch = new SpriteBatch();
-		
+
 		toBeRendered = new ArrayList<Renderable>();
 		toBeTicked = new ArrayList<Tickable>();
 		pausedTicked = new ArrayList<Tickable>();
-		
-		Texture.setEnforcePotImages(false);
+
+		GLTexture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		Background.load();
 		
@@ -138,7 +140,7 @@ public class Game implements ApplicationListener, Tickable {
 				}
 			}
 		}, 0, 50);
-		
+
 		// Create our hippie
 		hippie = new RainbowHippie();
 		
@@ -177,7 +179,27 @@ public class Game implements ApplicationListener, Tickable {
 		tickCount++;
 		//The barrel spawning needs work, its pretty terrible right now
 		if (generator.nextInt((999 - scoreCounter.score()) / 10) == 0 && !hippie.isDead) {
-			new Barrel(Barrel.randomInt(50, (int) screenSize.y - 50));
+			if(generator.nextBoolean())
+				new Barrel(Barrel.randomInt(50, (int) screenSize.y - 50));
+			else 
+				new Balloon(getRandColor());
 		}
+	}
+	
+	private Color getRandColor() {
+		int color = generator.nextInt(5);
+		switch(color){
+		case 0:
+			return Color.BLACK;
+		case 1:
+			return Color.WHITE;
+		case 2:
+			return Color.RED;
+		case 3:
+			return Color.BLUE;
+		case 4:
+			return Color.GREEN;
+		}
+		return Color.WHITE;
 	}
 }
