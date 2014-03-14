@@ -5,6 +5,8 @@ import gui.GuiImage;
 import gui.StartSign;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -26,9 +28,9 @@ public class RainbowHippie implements Renderable, Tickable {
 	// Rendering
 	public Texture activeTexture;
 	public int srcX, srcY, srcWidth, srcHeight;
-	public float gravity = -0.5f;
+	public float gravity = -0.1f;
 	public int state = HOLDING;
-	public boolean isDead = false;
+	public boolean isDead = false, isRainbowing = false;
 	private int frame = 0;
 	public StartSign sign = new StartSign();
 	public GuiImage logo = new GuiImage(AssetManager.logo, new Vector2(Game.center.x - (AssetManager.logo.getWidth() / 2), Game.center.y));
@@ -37,6 +39,7 @@ public class RainbowHippie implements Renderable, Tickable {
 	// Positional and movement
 	public Vector2 location;
 	public float damping = .15f;
+	private float rainbowBendModifier = 0;
 	public boolean lockedX = false;
 	public boolean lockedY = false;
 
@@ -54,25 +57,32 @@ public class RainbowHippie implements Renderable, Tickable {
 
 	@Override
 	public void render() {
-		if (state != HIDDEN)
-			Game.activeGame.batch.draw(activeTexture, location.x, location.y, srcX, srcY, srcWidth, srcHeight);
+		if (state != HIDDEN) {
+			Game.activeGame.batch.draw(activeTexture, location.x, location.y,
+										srcX, srcY, srcWidth, srcHeight);
+			if (isRainbowing)
+				RainbowRay.render((rainbowBendModifier/1000), new Vector2(location.x+130, (location.y-(Game.screenSize.y/2))+150));
+		}
 	}
 
 	@Override
 	public void tick() {
 		// Move bounding box to the center of our hippie
 		boundingBox.setCenter(new Vector2(location.x + hippieSize.x / 2, location.y + hippieSize.y / 2));
-
+		
+		//Check to see if we should be rainbowing (Keys.SPACE == the mouse left click for some reason?)
+		isRainbowing = Gdx.input.isButtonPressed(Buttons.RIGHT) ? true : false;
+		
 		// Update based on state
 		if (state == FLYING) {
 			// Animate
 			animate(7, AssetManager.fly);
 			sign.visible = false;
 
-			if(Gdx.input.isTouched()) flyForce.y += 10.0f;
+			if(Gdx.input.isButtonPressed(Buttons.LEFT)) flyForce.y += 10.0f;
 			
 			flyForce.y += gravity;
-
+			
 			if(flyForce.y >= 0.6f) flyForce.y = 0.6f;
 			
 			
@@ -87,6 +97,9 @@ public class RainbowHippie implements Renderable, Tickable {
 				location.x += amountToMoveX;
 			if (!lockedY)
 				location.y += amountToMoveY;
+			
+			System.out.println(amountToMoveY/50);
+			rainbowBendModifier = amountToMoveY/50;
 		} else if (state == HOLDING) {
 			animate(7, AssetManager.flyHold);
 			sign.useFrame(frame);

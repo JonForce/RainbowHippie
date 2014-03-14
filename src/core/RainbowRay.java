@@ -34,7 +34,7 @@ public class RainbowRay {
 	public static void render(float curve, Vector2 location) {
 		float deltaCurve = Math.abs(lastCurve-curve);
 		
-		if (deltaCurve > .0001) {
+		if (deltaCurve > 0) {
 			lastGenerated = generateCurvedRainbow(curve);
 			timesGenerated ++;
 			mapB.dispose();
