@@ -10,20 +10,20 @@ import core.Renderable;
 import core.Tickable;
 
 public class Balloon implements Renderable, Tickable {
-
+	
 	public Color color;
-
+	
 	private Vector2 location;
 	private float moveSpeed;
-
+	
 	public Texture activeTexture;
 	public int srcX, srcY, srcWidth, srcHeight;
 	private int frame = 0, frameDelay = 5;
-
+	
 	public Balloon(Color color) {
 		this.color = new Color(color);
 		this.location = new Vector2(Game.generator.nextInt((int) Game.screenSize.x), -200);
-		//see if balloon is spawned too close to player. May need to tweak
+		//See if balloon is spawned too close to player. May need to tweak
 		this.activeTexture = AssetManager.balloon;
 		if(location.x <= Game.center.x - 200) location.x = Game.center.x - 200;
 		if(location.x >= Game.screenSize.x - activeTexture.getWidth() / 7) location.x = Game.screenSize.x - activeTexture.getWidth() / 7;

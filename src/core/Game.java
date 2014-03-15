@@ -178,7 +178,7 @@ public class Game implements ApplicationListener, Tickable {
 	public void tick() {
 		tickCount++;
 		//The barrel spawning needs work, its pretty terrible right now
-		if (generator.nextInt((999 - scoreCounter.score()) / 10) == 0 && !hippie.isDead) {
+		if (generator.nextInt((999 - scoreCounter.score()*10) / 10) == 0 && !hippie.isDead) {
 			if(generator.nextBoolean())
 				new Barrel(Barrel.randomInt(50, (int) screenSize.y - 50));
 			else 
