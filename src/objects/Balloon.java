@@ -25,9 +25,10 @@ public class Balloon implements Renderable, Tickable {
 		this.location = new Vector2(Game.generator.nextInt((int) Game.screenSize.x), -200);
 		//See if balloon is spawned too close to player. May need to tweak
 		this.activeTexture = AssetManager.balloon;
-		if(location.x <= Game.center.x - 200) location.x = Game.center.x - 200;
-		if(location.x >= Game.screenSize.x - activeTexture.getWidth() / 7) location.x = Game.screenSize.x - activeTexture.getWidth() / 7;
-		this.moveSpeed = 25 * Game.generator.nextFloat() + 5f;
+		this.location.y = Game.generator.nextInt((int) Game.screenSize.y);
+		if(location.y >= Game.screenSize.y - activeTexture.getHeight()) location.y = Game.screenSize.y - activeTexture.getHeight();
+		this.location.x = Game.screenSize.x;
+		this.moveSpeed = 10 * Game.generator.nextFloat() + 5f;
 		Game.activeGame.toBeTicked.add(this);
 		Game.activeGame.toBeRendered.add(this);
 	}
@@ -35,7 +36,8 @@ public class Balloon implements Renderable, Tickable {
 	@Override
 	public void tick() {
 		animate(6, activeTexture);
-		location.y += moveSpeed;
+		location.x -= moveSpeed;
+		location.y += Math.sin(location.x) * 1;
 		
 		if(location.y >= Game.screenSize.y) {
 			Game.activeGame.toBeRendered.remove(this);
