@@ -85,6 +85,19 @@ public class Game implements ApplicationListener, Tickable {
 	
 	public void restart() {
 		scoreCounter.reset();
+		RainbowHippie.activeHippie.reset();
+		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
+			Tickable t = toBeTicked.get(i);
+			if(t instanceof Balloon || t instanceof Barrel) {
+				toBeTicked.remove(t);
+			}
+		}
+		for(int i = 0; i <= toBeRendered.size() - 1; i++) {
+			Renderable r = toBeRendered.get(i);
+			if(r instanceof Balloon || r instanceof Barrel) {
+				toBeRendered.remove(r);
+			}
+		}
 	}
 	
 	public void quit() {

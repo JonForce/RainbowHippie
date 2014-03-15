@@ -12,18 +12,18 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class RainbowHippie implements Renderable, Tickable {
-	
+
 	public static RainbowHippie activeHippie;
-	
+
 	// Enumerator
 	public static final int FLYING = 0;
 	public static final int HIDDEN = 1;
 	public static final int HOLDING = 2;
-	
+
 	// Other immutables
 	public final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth() / 7, AssetManager.fly.getHeight());
 	public final int delayAfterDeath = 50;
-	
+
 	// Rendering
 	public Texture activeTexture;
 	public int srcX, srcY, srcWidth, srcHeight;
@@ -32,19 +32,19 @@ public class RainbowHippie implements Renderable, Tickable {
 	private int frame = 0;
 	public StartSign sign = new StartSign();
 	public GuiImage logo = new GuiImage(AssetManager.logo, new Vector2(Game.center.x - (AssetManager.logo.getWidth() / 2), Game.center.y));
-	
+
 	// Positional and movement
-	public Vector2 location, momentum = new Vector2(0,0);
+	public Vector2 location, momentum = new Vector2(0, 0);
 	public float damping = .15f;
 	private float rainbowBendModifier = 0;
 	public boolean lockedX = false, lockedY = false;
 	public float airResistance = 15f;
 	public float jumpAmount = 2f;
 	public float gravity = -1f;
-	
+
 	// Collision
 	public Rectangle boundingBox;
-	
+
 	public RainbowHippie() {
 		activeHippie = this;
 		location = Game.startPosition;
@@ -53,52 +53,53 @@ public class RainbowHippie implements Renderable, Tickable {
 		Game.activeGame.toBeTicked.add(this);
 		boundingBox = new Rectangle(0, 0, hippieSize.x - 30, hippieSize.y - 30);
 	}
-	
+
 	@Override
 	public void render() {
 		if (state != HIDDEN) {
-			Game.activeGame.batch.draw(activeTexture, location.x, location.y,
-										srcX, srcY, srcWidth, srcHeight);
+			Game.activeGame.batch.draw(activeTexture, location.x, location.y, srcX, srcY, srcWidth, srcHeight);
 			if (isRainbowing)
-				RainbowRay.render((rainbowBendModifier/1000), new Vector2(location.x+130, (location.y-(Game.screenSize.y/2))+150));
+				RainbowRay.render((rainbowBendModifier / 1000), new Vector2(location.x + 130, (location.y - (Game.screenSize.y / 2)) + 150));
 		}
 	}
-	
+
 	@Override
 	public void tick() {
 		// Move bounding box to the center of our hippie
 		boundingBox.setCenter(new Vector2(location.x + hippieSize.x / 2, location.y + hippieSize.y / 2));
-		
-		// Check to see if we should be rainbowing (Keys.SPACE == the mouse left click for some reason?)
+
+		// Check to see if we should be rainbowing (Keys.SPACE == the mouse left
+		// click for some reason?)
 		isRainbowing = Gdx.input.isButtonPressed(Buttons.RIGHT) ? true : false;
-		
+
 		// Update based on state
 		if (state == FLYING) {
 			// Animate
 			animate(7, AssetManager.fly);
 			sign.visible = false;
 
-			if(Gdx.input.isButtonPressed(Buttons.LEFT)) momentum.y += jumpAmount;
-			
+			if (Gdx.input.isButtonPressed(Buttons.LEFT))
+				momentum.y += jumpAmount;
+
 			momentum.y += gravity;
-			
+
 			if (momentum.y < -5)
 				momentum.y = -5;
-			
+
 			// Deltas are the desired position-actualPosition
 			float deltaX = 50 - location.x;
-			
+
 			// Amount to moves are the deltas*damping
 			float amountToMoveY = momentum.y * damping * airResistance;
 			float amountToMoveX = deltaX * (damping / 4);
-			
+
 			// Move by the amount to move
 			if (!lockedX)
 				location.x += amountToMoveX;
 			if (!lockedY)
 				location.y += amountToMoveY;
-			
-			rainbowBendModifier = amountToMoveY/50;
+
+			rainbowBendModifier = amountToMoveY / 50;
 		} else if (state == HOLDING) {
 			animate(7, AssetManager.flyHold);
 			sign.useFrame(frame);
@@ -163,5 +164,12 @@ public class RainbowHippie implements Renderable, Tickable {
 			location.y = 30;
 			momentum.y = 0;
 		}
+	}
+
+	public void reset() {
+		activeHippie.state = FLYING;
+		location = new Vector2((Game.screenSize.x / 2) - 200, (Game.screenSize.y / 2) - 200);
+		isRainbowing = false;
+		isDead = false;
 	}
 }
