@@ -59,8 +59,8 @@ public class RainbowHippie implements Renderable, Tickable {
 		if (state != HIDDEN) {
 			Game.activeGame.batch.draw(activeTexture, location.x, location.y,
 										srcX, srcY, srcWidth, srcHeight);
-			if (isRainbowing)
-				RainbowRay.render((rainbowBendModifier/1000), new Vector2(location.x+130, (location.y-(Game.screenSize.y/2))+150));
+			//if (isRainbowing)
+				//RainbowRay.render((rainbowBendModifier/1000), new Vector2(location.x+130, (location.y-(Game.screenSize.y/2))+150));
 		}
 	}
 	

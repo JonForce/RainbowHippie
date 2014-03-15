@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -145,13 +146,18 @@ public class Game implements ApplicationListener, Tickable {
 		hippie = new RainbowHippie();
 		
 		RainbowRay.load();
+		
+		Texture[] positiveCurvedRainbows = new Texture[150];
+		for (int i = 0; i != 150; i ++) {
+			positiveCurvedRainbows[i] = RainbowRay.generateCurvedRainbow(i);
+		}
 	}
 
 	@Override
 	public void dispose() {
 		clock.cancel();
 	}
-
+	
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
@@ -169,11 +175,11 @@ public class Game implements ApplicationListener, Tickable {
 		
 		batch.end();
 	}
-
+	
 	@Override
 	public void resize(int x, int y) {
 	}
-
+	
 	@Override
 	public void tick() {
 		tickCount++;
