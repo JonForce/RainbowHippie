@@ -12,27 +12,26 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class RainbowHippie implements Renderable, Tickable {
-
+	
 	public static RainbowHippie activeHippie;
-
+	
 	// Enumerator
 	public static final int FLYING = 0;
 	public static final int HIDDEN = 1;
 	public static final int HOLDING = 2;
-
+	
 	// Other immutables
 	public final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth() / 7, AssetManager.fly.getHeight());
 	public final int delayAfterDeath = 50;
-
+	
 	// Rendering
 	public Texture activeTexture;
-	public int srcX, srcY, srcWidth, srcHeight;
+	public int srcX, srcY, srcWidth, srcHeight, frame = 0;
 	public int state = HOLDING;
 	public boolean isDead = false, isRainbowing = false;
-	private int frame = 0;
 	public StartSign sign = new StartSign();
 	public GuiImage logo = new GuiImage(AssetManager.logo, new Vector2(Game.center.x - (AssetManager.logo.getWidth() / 2), Game.center.y));
-
+	
 	// Positional and movement
 	public Vector2 location, momentum = new Vector2(0, 0);
 	public float damping = .15f;
@@ -41,10 +40,11 @@ public class RainbowHippie implements Renderable, Tickable {
 	public float airResistance = 15f;
 	public float jumpAmount = 2f;
 	public float gravity = -1f;
-
+	
 	// Collision
 	public Rectangle boundingBox;
-
+	public Function rainbowCollisionTest;
+	
 	public RainbowHippie() {
 		activeHippie = this;
 		location = Game.startPosition;
@@ -52,26 +52,38 @@ public class RainbowHippie implements Renderable, Tickable {
 		Game.activeGame.toBeRendered.add(this);
 		Game.activeGame.toBeTicked.add(this);
 		boundingBox = new Rectangle(0, 0, hippieSize.x - 30, hippieSize.y - 30);
+		rainbowCollisionTest = new Function() {
+			@Override
+			public boolean test(float x, float y) {
+				//130 is the amount from the location.x to where we want to start the rainbow
+				//150 is the amount from the location.y to where we want to start the rainbow
+				float parent = (float) (((Math.pow(x-location.x+150, 2)*-rainbowBendModifier)+150));
+				boolean testA = y <= parent + AssetManager.rainbow.getHeight();
+				boolean testB = y >= parent;
+				return testA && testB;
+			}
+		};
 	}
-
+	
 	@Override
 	public void render() {
 		if (state != HIDDEN) {
 			Game.activeGame.batch.draw(activeTexture, location.x, location.y, srcX, srcY, srcWidth, srcHeight);
-			if (isRainbowing)
-				RainbowRay.render((rainbowBendModifier / 1000), new Vector2(location.x + 130, (location.y - (Game.screenSize.y / 2)) + 150));
+			if (isRainbowing) {
+				//130 is the amount from the location.x to where we want to start the rainbow
+				//150 is the amount from the location.y to where we want to start the rainbow
+				RainbowRay.render(rainbowBendModifier, new Vector2(location.x + 130, (location.y - (Game.screenSize.y / 2)) + 150));
+			}
 		}
 	}
-
+	
 	@Override
 	public void tick() {
 		// Move bounding box to the center of our hippie
-		boundingBox.setCenter(new Vector2(location.x + hippieSize.x / 2, location.y + hippieSize.y / 2));
-
-		// Check to see if we should be rainbowing (Keys.SPACE == the mouse left
-		// click for some reason?)
+		boundingBox.setCenter(new Vector2(location.x + hippieSize.x / 2, location.y + hippieSize.y / 2 + 10));
+		
 		isRainbowing = Gdx.input.isButtonPressed(Buttons.RIGHT) ? true : false;
-
+		
 		// Update based on state
 		if (state == FLYING) {
 			// Animate
@@ -99,7 +111,7 @@ public class RainbowHippie implements Renderable, Tickable {
 			if (!lockedY)
 				location.y += amountToMoveY;
 
-			rainbowBendModifier = amountToMoveY / 50;
+			rainbowBendModifier = (amountToMoveY / 50) / 1000;
 		} else if (state == HOLDING) {
 			animate(7, AssetManager.flyHold);
 			sign.useFrame(frame);
@@ -114,7 +126,7 @@ public class RainbowHippie implements Renderable, Tickable {
 			// Uses the frame as a timer to wait the delay before displaying the
 			// death screen
 			if (frame >= delayAfterDeath) {
-
+				//Display death screen...
 			} else {
 				frame++;
 			}

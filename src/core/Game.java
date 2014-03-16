@@ -160,12 +160,13 @@ public class Game implements ApplicationListener, Tickable {
 		
 		RainbowRay.load();
 		
-		Texture[] positiveCurvedRainbows = new Texture[150];
-		for (int i = 0; i != 150; i ++) {
-			positiveCurvedRainbows[i] = RainbowRay.generateCurvedRainbow(i);
-		}
+		//********TESTING***********
+		//Texture[] positiveCurvedRainbows = new Texture[150];
+		//for (int i = 0; i != 150; i ++) {
+		//	positiveCurvedRainbows[i] = RainbowRay.generateCurvedRainbow(i);
+		//}
 	}
-
+	
 	@Override
 	public void dispose() {
 		clock.cancel();
@@ -191,6 +192,7 @@ public class Game implements ApplicationListener, Tickable {
 	
 	@Override
 	public void resize(int x, int y) {
+		
 	}
 	
 	@Override
@@ -199,7 +201,7 @@ public class Game implements ApplicationListener, Tickable {
 		//The barrel spawning needs work, its pretty terrible right now
 		if (generator.nextInt((999 - scoreCounter.score()*10) / 10) == 0 && !hippie.isDead) {
 			if(generator.nextBoolean())
-				new Barrel(Barrel.randomInt(50, (int) screenSize.y - 50));
+				new Barrel(generator.nextInt((int) (screenSize.y-AssetManager.barrel.getHeight())));
 			else 
 				new Balloon(getRandColor());
 		}

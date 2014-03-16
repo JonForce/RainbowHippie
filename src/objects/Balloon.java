@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import core.AssetManager;
 import core.Game;
+import core.RainbowHippie;
 import core.Renderable;
 import core.Tickable;
 
@@ -13,35 +14,64 @@ public class Balloon implements Renderable, Tickable {
 	
 	public Color color;
 	
-	private Vector2 location;
+	private Vector2 location = new Vector2();
 	private float moveSpeed;
+	public float verticalAmountModifier = 100, verticalSpeedModifier = 100;
 	
 	public Texture activeTexture;
 	public int srcX, srcY, srcWidth, srcHeight;
 	private int frame = 0, frameDelay = 5;
 	
+	private boolean isSwerving;
+	
 	public Balloon(Color color) {
 		this.color = new Color(color);
-		this.location = new Vector2(Game.generator.nextInt((int) Game.screenSize.x), -200);
-		//See if balloon is spawned too close to player. May need to tweak
-		this.activeTexture = AssetManager.balloon;
-		this.location.y = Game.generator.nextInt((int) Game.screenSize.y);
-		if(location.y >= Game.screenSize.y - activeTexture.getHeight()) location.y = Game.screenSize.y - activeTexture.getHeight();
-		this.location.x = Game.screenSize.x;
-		this.moveSpeed = 10 * Game.generator.nextFloat() + 5f;
+		activeTexture = AssetManager.balloon;
+		location.x = Game.screenSize.x + (activeTexture.getWidth()/6); // 6 is the number of frames
+		moveSpeed = 10 * Game.generator.nextFloat() + 5f;
+		
+		if (Game.generator.nextBoolean()) {
+			location.y = (Game.screenSize.y/2)-(activeTexture.getHeight()/2);
+			verticalAmountModifier = 10 + Game.generator.nextInt(25);
+			verticalSpeedModifier = verticalAmountModifier + Game.generator.nextInt(5);
+			isSwerving = true;
+		} else {
+			location.y = Game.generator.nextInt((int) Game.screenSize.y - activeTexture.getHeight());
+			verticalAmountModifier = 0;
+			verticalSpeedModifier = 0;
+			isSwerving = false;
+		}
+		
 		Game.activeGame.toBeTicked.add(this);
 		Game.activeGame.toBeRendered.add(this);
 	}
-
+	
+	public Vector2 getCenter() {
+		return new Vector2(location.x+(activeTexture.getWidth()/2), location.y+(activeTexture.getHeight()/2));
+	}
+	
+	public void pop() {
+		Game.activeGame.scoreCounter.addOne();
+		dispose();
+	}
+	
+	public void dispose() {
+		Game.activeGame.toBeRendered.remove(this);
+		Game.activeGame.toBeTicked.remove(this);
+	}
+	
 	@Override
 	public void tick() {
 		animate(6, activeTexture);
 		location.x -= moveSpeed;
-		location.y += Math.sin(location.x) * 1;
+		if (isSwerving)
+			location.y += (float) (Math.sin(location.x/verticalAmountModifier) * verticalSpeedModifier);
 		
-		if(location.y >= Game.screenSize.y) {
-			Game.activeGame.toBeRendered.remove(this);
-			Game.activeGame.toBeTicked.remove(this);
+		if (RainbowHippie.activeHippie.rainbowCollisionTest.test(getCenter()) && RainbowHippie.activeHippie.isRainbowing)
+			pop();
+		
+		if(location.x <= 0-activeTexture.getWidth()) {
+			dispose();
 		}
 	}
 
@@ -52,9 +82,6 @@ public class Balloon implements Renderable, Tickable {
 		Game.activeGame.batch.setColor(Color.WHITE);
 	}
 
-	/*
-	 * Sets the activeSpritesheet, srcX, width and height.
-	 */
 	private void animate(int frames, Texture spriteSheet) {
 		if (frameDelay <= 0) {
 			frameDelay = 2;
@@ -70,6 +97,5 @@ public class Balloon implements Renderable, Tickable {
 			srcHeight = spriteSheet.getHeight();
 		}
 		frameDelay--;
-		
 	}
 }

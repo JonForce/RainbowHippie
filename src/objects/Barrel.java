@@ -72,8 +72,6 @@ public class Barrel implements Renderable, Tickable {
 		if (location.x < -100) {
 			Game.activeGame.toBeTicked.remove(this);
 			Game.activeGame.toBeRendered.remove(this);
-			//This a temorary thing, to allow the testing of score. You wont get points for this in the real game.
-			Game.activeGame.scoreCounter.addOne();
 		}
 	}
 	

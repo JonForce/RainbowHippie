@@ -7,7 +7,7 @@ public class AssetManager {
 	
 	//Hippie junk
 	public static Texture fly, flyHold;
-	public static Texture head, body, arm, leg;
+	public static Texture head, body, arm, leg, openMouth;
 	
 	//GUI
 	public static Texture sign, logo;
@@ -30,6 +30,10 @@ public class AssetManager {
 		/*
 		intro = new Texture[133];
 		for (int i = 1; i != 133; i ++) {
+			if ((i >= 2 && i <= 12) ||
+				(i >= 51 && i <= 53) ||
+				(i >= 92 && i <= 118))
+				continue;
 			intro[i] = new Texture(Gdx.files.internal("assets/intro/Frame ("+i+").jpg"));
 		}
 		*/
@@ -40,6 +44,7 @@ public class AssetManager {
 		head = new Texture(Gdx.files.internal("assets/sprite/head.png"));
 		arm = new Texture(Gdx.files.internal("assets/sprite/arm.png"));
 		leg = new Texture(Gdx.files.internal("assets/sprite/leg.png"));
+		openMouth  = new Texture(Gdx.files.internal("assets/sprite/mouth.png"));
 		
 		sign = new Texture(Gdx.files.internal("assets/sprite/signfloat.png"));
 		logo = new Texture(Gdx.files.internal("assets/logo.png"));
