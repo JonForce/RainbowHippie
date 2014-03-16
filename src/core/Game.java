@@ -1,5 +1,6 @@
 package core;
 
+import gui.DeathMenu;
 import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
@@ -19,6 +20,7 @@ import aesthetics.Background;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
@@ -40,13 +42,15 @@ public class Game implements ApplicationListener, Tickable {
 	public static Random generator = new Random();
 	public static FPSLogger logger = new FPSLogger();
 	
+	public static Preferences prefs;
+	
 	private Timer clock;
 	private int tickCount = 0;
 	
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
-	public boolean isPaused = false;
+	public boolean isPaused = false, deathMenuCreated = false;
 	
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
@@ -67,6 +71,9 @@ public class Game implements ApplicationListener, Tickable {
 		cfg.addIcon("assets/taskbar_icon.png", FileType.Internal);
 		cfg.addIcon("assets/window_icon.png", FileType.Internal);
 		new LwjglApplication(new Game(), cfg);
+		
+		prefs = Gdx.app.getPreferences("rh.prefs");
+		System.out.println(prefs.getInteger("high_score"));
 	}
 	
 	public void start() {
@@ -85,6 +92,12 @@ public class Game implements ApplicationListener, Tickable {
 	}
 	
 	public void restart() {
+		if(prefs.getInteger("high_score") < scoreCounter.score()) {
+			prefs.putInteger("high_score", scoreCounter.score());
+			prefs.flush();
+		}
+
+		deathMenuCreated = false;
 		scoreCounter.reset();
 		RainbowHippie.activeHippie.reset();
 		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
@@ -192,7 +205,6 @@ public class Game implements ApplicationListener, Tickable {
 	
 	@Override
 	public void resize(int x, int y) {
-		
 	}
 	
 	@Override
@@ -204,6 +216,9 @@ public class Game implements ApplicationListener, Tickable {
 				new Barrel(generator.nextInt((int) (screenSize.y-AssetManager.barrel.getHeight())));
 			else 
 				new Balloon(getRandColor());
+		} else if(hippie.isDead && !deathMenuCreated) {
+			new DeathMenu();
+			deathMenuCreated = true;
 		}
 	}
 	

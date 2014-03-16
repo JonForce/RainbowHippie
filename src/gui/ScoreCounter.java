@@ -50,6 +50,37 @@ public class ScoreCounter implements Renderable {
 		}
 	}
 	
+	public void render(float x, float y) {
+		if (scoreThirdDigit == 0 && scoreSecondDigit == 0) {
+			if (scoreFirstDigit == 0)
+				scoreFirstDigit = 10;
+			Game.activeGame.batch.draw(font, x, y - font.getHeight() - 10,
+					(scoreFirstDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
+			if (scoreFirstDigit == 10)
+				scoreFirstDigit = 0;
+		} else if (scoreThirdDigit == 0) {
+			if (scoreFirstDigit == 0)
+				scoreFirstDigit = 10;
+			if (scoreSecondDigit == 0)
+				scoreSecondDigit = 10;
+			Game.activeGame.batch.draw(font, (font.getWidth() / 10) + x, y - font.getHeight() - 10,
+					(scoreFirstDigit - 1) * (font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
+			Game.activeGame.batch.draw(font, x, y - font.getHeight()-10,
+					(scoreSecondDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
+			if (scoreFirstDigit == 10)
+				scoreFirstDigit = 0;
+			if (scoreSecondDigit == 10)
+				scoreSecondDigit = 0;
+		} else {
+			Game.activeGame.batch.draw(font, (font.getWidth()/10) + x, y - font.getHeight()-10,
+					(scoreFirstDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
+			Game.activeGame.batch.draw(font, (font.getWidth()/10)+x, y-font.getHeight()-10,
+					(scoreSecondDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
+			Game.activeGame.batch.draw(font, x, y-font.getHeight()-10,
+					(scoreThirdDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
+		}
+	}
+	
 	public void reset() {
 		scoreFirstDigit = 1;
 		scoreSecondDigit = 0;

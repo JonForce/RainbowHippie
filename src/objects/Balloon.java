@@ -22,7 +22,7 @@ public class Balloon implements Renderable, Tickable {
 	public int srcX, srcY, srcWidth, srcHeight;
 	private int frame = 0, frameDelay = 5;
 	
-	private boolean isSwerving;
+	private boolean isSwerving, behindPlayer;
 	
 	public Balloon(Color color) {
 		this.color = new Color(color);
@@ -67,8 +67,13 @@ public class Balloon implements Renderable, Tickable {
 		if (isSwerving)
 			location.y += (float) (Math.sin(location.x/verticalAmountModifier) * verticalSpeedModifier);
 		
-		if (RainbowHippie.activeHippie.rainbowCollisionTest.test(getCenter()) && RainbowHippie.activeHippie.isRainbowing)
+		if (RainbowHippie.activeHippie.rainbowCollisionTest.test(getCenter()) && RainbowHippie.activeHippie.isRainbowing && !color.equals(Color.WHITE))
 			pop();
+		
+		if(location.x < Game.activeGame.hippie.location.x && !behindPlayer) {
+			Game.activeGame.scoreCounter.subtractOne();
+			behindPlayer = true;
+		}
 		
 		if(location.x <= 0-activeTexture.getWidth()) {
 			dispose();
