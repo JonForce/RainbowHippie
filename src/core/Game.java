@@ -1,6 +1,6 @@
 package core;
 
-import gui.DeathMenu;
+import gui.DeathPopup;
 import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
@@ -20,7 +20,6 @@ import aesthetics.Background;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
@@ -28,7 +27,9 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -42,21 +43,20 @@ public class Game implements ApplicationListener, Tickable {
 	public static Random generator = new Random();
 	public static FPSLogger logger = new FPSLogger();
 	
-	public static Preferences prefs;
-	
 	private Timer clock;
 	private int tickCount = 0;
 	
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
-	public boolean isPaused = false, deathMenuCreated = false;
+	public boolean isPaused = false;
 	
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
 	public ArrayList<Tickable> pausedTicked;
 	
 	public PauseSign pauseSign;
+	public DeathPopup deathPopup;
 	public QuitButton quitButton;
 	public ScoreCounter scoreCounter;
 	
@@ -71,9 +71,6 @@ public class Game implements ApplicationListener, Tickable {
 		cfg.addIcon("assets/taskbar_icon.png", FileType.Internal);
 		cfg.addIcon("assets/window_icon.png", FileType.Internal);
 		new LwjglApplication(new Game(), cfg);
-		
-		prefs = Gdx.app.getPreferences("rh.prefs");
-		System.out.println(prefs.getInteger("high_score"));
 	}
 	
 	public void start() {
@@ -92,12 +89,6 @@ public class Game implements ApplicationListener, Tickable {
 	}
 	
 	public void restart() {
-		if(prefs.getInteger("high_score") < scoreCounter.score()) {
-			prefs.putInteger("high_score", scoreCounter.score());
-			prefs.flush();
-		}
-
-		deathMenuCreated = false;
 		scoreCounter.reset();
 		RainbowHippie.activeHippie.reset();
 		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
@@ -185,6 +176,8 @@ public class Game implements ApplicationListener, Tickable {
 		clock.cancel();
 	}
 	
+	Pixmap map;
+	int testCount = 0;
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
@@ -199,26 +192,38 @@ public class Game implements ApplicationListener, Tickable {
 		for (int i = 0; i <= toBeRendered.size() - 1; i++) {
 			toBeRendered.get(i).render();
 		}
-		
+		/*
+		testCount ++;
+		if (testCount >= 10) {
+			map = new Pixmap((int)(Game.screenSize.x), (int)(Game.screenSize.y), Format.RGBA8888);
+			for (int y = 0; y != screenSize.y; y ++) {
+				for (int x = 0; x != screenSize.x; x ++) {
+					if (hippie.rainbowCollisionTest.test(x, y)) {
+						map.drawPixel(x, y, Color.rgba8888(1, 0, 0, 1));
+					}
+				}
+			}
+			batch.draw(new Texture(map), 0, 0);
+			testCount = 0;
+		}
+		*/
 		batch.end();
 	}
 	
 	@Override
 	public void resize(int x, int y) {
+		
 	}
 	
 	@Override
 	public void tick() {
 		tickCount++;
-		//The barrel spawning needs work, its pretty terrible right now
+		//The spawning needs work, its pretty terrible right now
 		if (generator.nextInt((999 - scoreCounter.score()*10) / 10) == 0 && !hippie.isDead) {
 			if(generator.nextBoolean())
 				new Barrel(generator.nextInt((int) (screenSize.y-AssetManager.barrel.getHeight())));
 			else 
 				new Balloon(getRandColor());
-		} else if(hippie.isDead && !deathMenuCreated) {
-			new DeathMenu();
-			deathMenuCreated = true;
 		}
 	}
 	
