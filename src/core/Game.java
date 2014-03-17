@@ -84,14 +84,10 @@ public class Game implements ApplicationListener, Tickable {
 		AssetManager.bgMusic.play();
 		
 		toBeTicked.add(this);
+		hippie.die();
 	}
 	
 	public void restart() {
-		if(prefs.getInteger("high_score") < scoreCounter.score()) {
-			prefs.putInteger("high_score", scoreCounter.score());
-			prefs.flush();
-		}
-
 		Game.activeGame.toBeRendered.add(scoreCounter);
 		scoreCounter.reset();
 		RainbowHippie.activeHippie.reset();
@@ -207,7 +203,7 @@ public class Game implements ApplicationListener, Tickable {
 	public void tick() {
 		tickCount++;
 		//The barrel spawning needs work, its pretty terrible right now
-		if (generator.nextInt((999 - scoreCounter.score()*10) / 10) == 0 && !hippie.isDead) {
+		if (generator.nextInt((999 - scoreCounter.score*10) / 10) == 0 && !hippie.isDead) {
 			if(generator.nextBoolean())
 				new Barrel(generator.nextInt((int) (screenSize.y-AssetManager.barrel.getHeight())));
 			else 

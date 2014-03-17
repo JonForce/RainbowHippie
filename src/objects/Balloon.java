@@ -51,7 +51,7 @@ public class Balloon implements Renderable, Tickable {
 	}
 	
 	public void pop() {
-		Game.activeGame.scoreCounter.addOne();
+		Game.activeGame.scoreCounter.score ++;
 		dispose();
 	}
 	
@@ -67,11 +67,17 @@ public class Balloon implements Renderable, Tickable {
 		if (isSwerving)
 			location.y += (float) (Math.sin(location.x/verticalAmountModifier) * verticalSpeedModifier);
 		
-		if (RainbowHippie.activeHippie.rainbowCollisionTest.test(getCenter()) && RainbowHippie.activeHippie.isRainbowing && !color.equals(Color.WHITE))
-			pop();
+		//if (RainbowHippie.activeHippie.rainbowCollisionTest.test(getCenter()) && RainbowHippie.activeHippie.isRainbowing && !color.equals(Color.WHITE))
+		//	pop();
 		
 		if(location.x < Game.activeGame.hippie.location.x && !behindPlayer) {
-			Game.activeGame.scoreCounter.subtractOne();
+			// If the player's score is below 0, kill him
+			/*
+			if (Game.activeGame.scoreCounter.score > 1)
+				Game.activeGame.scoreCounter.score --;
+			else
+				Game.activeGame.hippie.die();
+			*/
 			behindPlayer = true;
 		}
 		

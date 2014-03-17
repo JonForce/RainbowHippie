@@ -8,11 +8,10 @@ import core.Renderable;
 
 public class ScoreCounter implements Renderable {
 	
-	//Considers first to be smallest valued digit, second second smallest valued digit and so on.
-	public int scoreFirstDigit = 1;
-	public int scoreSecondDigit = 0;
-	public int scoreThirdDigit = 0;
 	private Texture font = AssetManager.font;
+	public int digitSize;
+	public int horizontalMargin = 3;
+	public int score = 1;
 	
 	public ScoreCounter() {
 		this(true);
@@ -21,114 +20,73 @@ public class ScoreCounter implements Renderable {
 	public ScoreCounter(boolean shouldBeRendered) {
 		if(shouldBeRendered)
 			Game.activeGame.toBeRendered.add(this);
+		digitSize = font.getWidth()/10;
 	}
 	
 	@Override
 	public void render() {
-		if (scoreThirdDigit == 0 && scoreSecondDigit == 0) {
-			if (scoreFirstDigit == 0)
-				scoreFirstDigit = 10;
-			Game.activeGame.batch.draw(font, 10, Game.screenSize.y-font.getHeight()-10,
-					(scoreFirstDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			if (scoreFirstDigit == 10)
-				scoreFirstDigit = 0;
-		} else if (scoreThirdDigit == 0) {
-			if (scoreFirstDigit == 0)
-				scoreFirstDigit = 10;
-			if (scoreSecondDigit == 0)
-				scoreSecondDigit = 10;
-			Game.activeGame.batch.draw(font, (font.getWidth()/10)+5, Game.screenSize.y-font.getHeight()-10,
-					(scoreFirstDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			Game.activeGame.batch.draw(font, 10, Game.screenSize.y-font.getHeight()-10,
-					(scoreSecondDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			if (scoreFirstDigit == 10)
-				scoreFirstDigit = 0;
-			if (scoreSecondDigit == 10)
-				scoreSecondDigit = 0;
-		} else {
-			Game.activeGame.batch.draw(font, (font.getWidth()/10)*2+5, Game.screenSize.y-font.getHeight()-10,
-					(scoreFirstDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			Game.activeGame.batch.draw(font, (font.getWidth()/10)+5, Game.screenSize.y-font.getHeight()-10,
-					(scoreSecondDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			Game.activeGame.batch.draw(font, 10, Game.screenSize.y-font.getHeight()-10,
-					(scoreThirdDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-		}
+		render(10, Game.screenSize.y-font.getHeight()-10);
+	}
+	
+	public void render(int number, float x, float y) {
+		int oldScore = score;
+		score = number;
+		render(x, y);
+		score = oldScore;
 	}
 	
 	public void render(float x, float y) {
-		if (scoreThirdDigit == 0 && scoreSecondDigit == 0) {
-			if (scoreFirstDigit == 0)
-				scoreFirstDigit = 10;
-			Game.activeGame.batch.draw(font, x, y - font.getHeight() - 10,
-					(scoreFirstDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			if (scoreFirstDigit == 10)
-				scoreFirstDigit = 0;
-		} else if (scoreThirdDigit == 0) {
-			if (scoreFirstDigit == 0)
-				scoreFirstDigit = 10;
-			if (scoreSecondDigit == 0)
-				scoreSecondDigit = 10;
-			Game.activeGame.batch.draw(font, (font.getWidth() / 10) + x, y - font.getHeight() - 10,
-					(scoreFirstDigit - 1) * (font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			Game.activeGame.batch.draw(font, x, y - font.getHeight()-10,
-					(scoreSecondDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			if (scoreFirstDigit == 10)
-				scoreFirstDigit = 0;
-			if (scoreSecondDigit == 10)
-				scoreSecondDigit = 0;
+		// Digits (from 0 to 2) are in ascending value
+		// Ex : if score = 193 scoreDigits[0]=3 scoreDigits[1]=9 scoreDigits[0]=1
+		int[] scoreDigits = new int[3];
+		scoreDigits[0] = score % 10;
+		scoreDigits[1] = (score % 100)/10;
+		scoreDigits[2] = (score % 1000)/100;
+		if (scoreDigits[2] != 0) {
+			renderDigit(scoreDigits[2], (int) x, (int) y);
+			renderDigit(scoreDigits[1], (int) x + digitSize + horizontalMargin, (int) y);
+			renderDigit(scoreDigits[0], (int) x + 2*(digitSize + horizontalMargin), (int) y);
+		} else if (scoreDigits[1] != 0) {
+			renderDigit(scoreDigits[1], (int) x, (int) y);
+			renderDigit(scoreDigits[0], (int) x + digitSize + horizontalMargin, (int) y);
 		} else {
-			Game.activeGame.batch.draw(font, (font.getWidth()/10) + x, y - font.getHeight()-10,
-					(scoreFirstDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			Game.activeGame.batch.draw(font, (font.getWidth()/10)+x, y-font.getHeight()-10,
-					(scoreSecondDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
-			Game.activeGame.batch.draw(font, x, y-font.getHeight()-10,
-					(scoreThirdDigit-1)*(font.getWidth()/10), 0, (font.getWidth()/10), font.getHeight());
+			renderDigit(scoreDigits[0], (int) x, (int) y);
 		}
+	}
+	
+	public void renderDigit(int digit, int x, int y) {
+		if (digit == 0)
+			Game.activeGame.batch.draw(font, x, y, 9*digitSize, 0, digitSize, font.getHeight());
+		else
+			Game.activeGame.batch.draw(font, x, y, (digit-1)*digitSize, 0, digitSize, font.getHeight());
 	}
 	
 	public void reset() {
-		scoreFirstDigit = 1;
-		scoreSecondDigit = 0;
-		scoreThirdDigit = 0;
+		score = 1;
 	}
 	
+	@Deprecated
 	public int score() {
-		return scoreFirstDigit+(scoreSecondDigit*10)+(scoreThirdDigit*100);
+		return score;
 	}
 	
+	@Deprecated
 	public void add(int amount) {
-		for (int i = 0; i != amount; i ++) {
-			addOne();
-		}
+		score += amount;
 	}
 	
+	@Deprecated
 	public void subtract(int amount) {
-		for (int i = 0; i != amount; i ++) {
-			subtractOne();
-		}
+		score -= amount;
 	}
 	
+	@Deprecated
 	public void addOne() {
-		scoreFirstDigit ++;
-		if (scoreFirstDigit > 9) {
-			scoreFirstDigit = 0;
-			scoreSecondDigit ++;
-			if (scoreSecondDigit > 9) {
-				scoreSecondDigit = 0;
-				scoreThirdDigit ++;
-			}
-		}
+		score ++;
 	}
 	
+	@Deprecated
 	public void subtractOne() {
-		scoreThirdDigit --;
-		if (scoreThirdDigit < 0) {
-			scoreThirdDigit = 0;
-			scoreSecondDigit --;
-			if (scoreSecondDigit < 0) {
-				scoreSecondDigit = 0;
-				scoreFirstDigit --;
-			}
-		}
+		score --;
 	}
 }

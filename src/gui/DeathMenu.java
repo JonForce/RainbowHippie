@@ -22,16 +22,20 @@ public class DeathMenu implements Tickable, Renderable {
 		twitter = new GuiImage(AssetManager.twitter, new Vector2(window.location.x + (270 + 60), window.location.y + 40));
 		counter = new ScoreCounter(false);
 		highScore = new ScoreCounter(false);
-		counter.scoreFirstDigit = Game.activeGame.scoreCounter.scoreFirstDigit;
-		counter.scoreSecondDigit = Game.activeGame.scoreCounter.scoreSecondDigit;
-		counter.scoreThirdDigit = Game.activeGame.scoreCounter.scoreThirdDigit;
+		counter.score = Game.activeGame.scoreCounter.score;
 		Game.activeGame.toBeTicked.add(this);
 		Game.activeGame.toBeRendered.add(this);
+		
+		if(Game.prefs.getInteger("high_score") < Game.activeGame.scoreCounter.score) {
+			Game.prefs.putInteger("high_score", Game.activeGame.scoreCounter.score);
+			Game.prefs.flush();
+		}
 	}
 
 	@Override
 	public void render() {
-		counter.render(window.location.x + 70, window.location.y + 295);
+		counter.render(window.location.x + 70, window.location.y + 237);
+		counter.render(Game.prefs.getInteger("high_score"), window.location.x + 70, window.location.y + 155);
 	}
 
 	@Override

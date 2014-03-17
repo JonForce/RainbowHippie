@@ -72,6 +72,8 @@ public class Barrel implements Renderable, Tickable {
 		if (location.x < -100) {
 			Game.activeGame.toBeTicked.remove(this);
 			Game.activeGame.toBeRendered.remove(this);
+			//Allow for the score to go up, delete when balloons can be popped
+			Game.activeGame.scoreCounter.score ++;
 		}
 	}
 	
