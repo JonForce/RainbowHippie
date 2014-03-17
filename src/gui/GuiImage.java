@@ -1,5 +1,6 @@
 package gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -60,6 +61,14 @@ public class GuiImage implements Renderable, Tickable {
 			Game.activeGame.toBeTicked.remove(this);
 			Game.activeGame.toBeRendered.remove(this);
 		}
+	}
+	
+	public boolean isClicked() {
+		if(Gdx.input.getX() >= location.x && Gdx.input.getX() <= location.x + texture.getWidth() &&
+				Game.screenSize.y - Gdx.input.getY() >= location.y && Game.screenSize.y - Gdx.input.getY() <= location.y + texture.getHeight()) {
+			return true;
+		}
+		return false;
 	}
 	
 	private Color getCurrentGameColor() {

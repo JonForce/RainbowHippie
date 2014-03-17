@@ -11,7 +11,7 @@ public class AssetManager {
 	
 	//GUI
 	public static Texture sign, logo;
-	public static Texture pause, pauseWindow, resumeButton, restartButton, quitButton, quitCloud;
+	public static Texture pause, pauseWindow, resumeButton, restartButton, quitButton, quitCloud, deathWindow, playAgain, facebook, twitter;
 	public static Texture font;
 	public static Texture[] intro;
 	
@@ -54,8 +54,11 @@ public class AssetManager {
 		resumeButton = new Texture(Gdx.files.internal("assets/ui/resume.png"));
 		restartButton = new Texture(Gdx.files.internal("assets/ui/restart.png"));
 		quitButton = new Texture(Gdx.files.internal("assets/ui/rage quit.png"));
-		
+		deathWindow = new Texture(Gdx.files.internal("assets/ui/window.png"));
+		playAgain = new Texture(Gdx.files.internal("assets/ui/playAgain.png"));
 		quitCloud = new Texture(Gdx.files.internal("assets/ui/ragequit.png"));
+		facebook = new Texture(Gdx.files.internal("assets/ui/facebook.png"));
+		twitter = new Texture(Gdx.files.internal("assets/ui/twitter.png"));
 		
 		bg = new Texture(Gdx.files.internal("assets/bg/bg.png"));
 		mountain = new Texture(Gdx.files.internal("assets/bg/mountain.png"));
