@@ -15,7 +15,12 @@ public class ScoreCounter implements Renderable {
 	private Texture font = AssetManager.font;
 	
 	public ScoreCounter() {
-		Game.activeGame.toBeRendered.add(this);
+		this(true);
+	}
+	
+	public ScoreCounter(boolean shouldBeRendered) {
+		if(shouldBeRendered)
+			Game.activeGame.toBeRendered.add(this);
 	}
 	
 	@Override

@@ -12,9 +12,6 @@ import java.util.TimerTask;
 
 import objects.Balloon;
 import objects.Barrel;
-
-import org.lwjgl.input.Keyboard;
-
 import aesthetics.Background;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -28,7 +25,6 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -73,7 +69,6 @@ public class Game implements ApplicationListener, Tickable {
 		new LwjglApplication(new Game(), cfg);
 		
 		prefs = Gdx.app.getPreferences("rh.prefs");
-		System.out.println(prefs.getInteger("high_score"));
 	}
 	
 	public void start() {
@@ -97,7 +92,7 @@ public class Game implements ApplicationListener, Tickable {
 			prefs.flush();
 		}
 
-		deathMenuCreated = false;
+		Game.activeGame.toBeRendered.add(scoreCounter);
 		scoreCounter.reset();
 		RainbowHippie.activeHippie.reset();
 		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
@@ -112,6 +107,7 @@ public class Game implements ApplicationListener, Tickable {
 				toBeRendered.remove(r);
 			}
 		}
+		deathMenuCreated = false;
 	}
 	
 	public void quit() {
@@ -217,6 +213,7 @@ public class Game implements ApplicationListener, Tickable {
 			else 
 				new Balloon(getRandColor());
 		} else if(hippie.isDead && !deathMenuCreated) {
+			Game.activeGame.toBeRendered.remove(scoreCounter);
 			new DeathMenu();
 			deathMenuCreated = true;
 		}
