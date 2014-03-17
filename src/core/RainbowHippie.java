@@ -57,7 +57,7 @@ public class RainbowHippie implements Renderable, Tickable {
 			public boolean test(float x, float y) {
 				//130 is the amount from the location.x to where we want to start the rainbow
 				//150 is the amount from the location.y to where we want to start the rainbow
-				float parent = (float) (((Math.pow(x-location.x+150, 2)*-rainbowBendModifier)+150));
+				float parent = (float) (((Math.pow(x-location.x-150, 2)*rainbowBendModifier)+(Game.screenSize.y-location.y)-150));
 				boolean testA = y <= parent + AssetManager.rainbow.getHeight();
 				boolean testB = y >= parent;
 				return testA && testB;
@@ -92,7 +92,7 @@ public class RainbowHippie implements Renderable, Tickable {
 
 			if (Gdx.input.isButtonPressed(Buttons.LEFT))
 				momentum.y += jumpAmount;
-
+ 
 			momentum.y += gravity;
 
 			if (momentum.y < -5)
