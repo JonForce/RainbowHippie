@@ -83,6 +83,7 @@ public class RainbowHippie implements Renderable, Tickable {
 			
 			momentum.y += gravity;
 			
+			// Cap the possible downward momentum
 			if (momentum.y < -7.5)
 				momentum.y = -7.5f;
 			
@@ -139,11 +140,14 @@ public class RainbowHippie implements Renderable, Tickable {
 		else
 			frame++;
 		
-		activeTexture = spriteSheet;
-		srcX = frame * (spriteSheet.getWidth() / frames);
+		if (!isRainbowing)
+			activeTexture = spriteSheet;
+		else
+			activeTexture = AssetManager.flyRainbowing;
+		srcX = frame * (activeTexture.getWidth() / frames);
 		srcY = 0;
-		srcWidth = (spriteSheet.getWidth() / frames);
-		srcHeight = spriteSheet.getHeight();
+		srcWidth = (activeTexture.getWidth() / frames);
+		srcHeight = activeTexture.getHeight();
 	}
 	
 	/*

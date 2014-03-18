@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 public class AssetManager {
 	
 	//Hippie junk
-	public static Texture fly, flyHold;
+	public static Texture fly, flyHold, flyRainbowing;
 	public static Texture head, body, arm, leg, openMouth;
 	
 	//GUI
@@ -40,6 +40,7 @@ public class AssetManager {
 		
 		fly = new Texture(Gdx.files.internal("assets/sprite/fly.png"));
 		flyHold = new Texture(Gdx.files.internal("assets/sprite/flyhold.png"));
+		flyRainbowing = new Texture(Gdx.files.internal("assets/sprite/rainbowfly.png"));
 		body = new Texture(Gdx.files.internal("assets/sprite/body.png"));
 		head = new Texture(Gdx.files.internal("assets/sprite/head.png"));
 		arm = new Texture(Gdx.files.internal("assets/sprite/arm.png"));
