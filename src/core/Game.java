@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -42,6 +43,7 @@ public class Game implements ApplicationListener, Tickable {
 	
 	private Timer clock;
 	private int tickCount = 0;
+	private int minimumSpawnTime = 400;
 	
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
@@ -84,7 +86,6 @@ public class Game implements ApplicationListener, Tickable {
 		AssetManager.bgMusic.play();
 		
 		toBeTicked.add(this);
-		hippie.die();
 	}
 	
 	public void restart() {
@@ -164,12 +165,6 @@ public class Game implements ApplicationListener, Tickable {
 		hippie = new RainbowHippie();
 		
 		RainbowRay.load();
-		
-		//********TESTING***********
-		//Texture[] positiveCurvedRainbows = new Texture[150];
-		//for (int i = 0; i != 150; i ++) {
-		//	positiveCurvedRainbows[i] = RainbowRay.generateCurvedRainbow(i);
-		//}
 	}
 	
 	@Override
@@ -199,16 +194,88 @@ public class Game implements ApplicationListener, Tickable {
 	public void resize(int x, int y) {
 	}
 	
+	private void doEasyEvent() {
+		if (generator.nextBoolean()) {
+			new Barrel(100);
+			new Barrel(170);
+			new Balloon(getRandColor()).location.y = 125;
+			new Balloon(getRandColor()).location.y = 200;
+		} else {
+			new Barrel(screenSize.y-100-AssetManager.barrel.getHeight());
+			new Barrel(screenSize.y-170-AssetManager.barrel.getHeight());
+			new Balloon(getRandColor()).location.y = screenSize.y-125-AssetManager.barrel.getHeight();
+			new Balloon(getRandColor()).location.y = screenSize.y-200-AssetManager.barrel.getHeight();
+		}
+	}
+	
+	private void doMediumEvent() {
+		if (generator.nextBoolean()) {
+			new Barrel(100).velocity = 15;
+			new Barrel(170).velocity = 15;
+			new Barrel(250).velocity = 15;
+		} else {
+			new Barrel(screenSize.y-100-AssetManager.barrel.getHeight()).velocity = 15;
+			new Barrel(screenSize.y-170-AssetManager.barrel.getHeight()).velocity = 15;
+			new Barrel(screenSize.y-250-AssetManager.barrel.getHeight()).velocity = 15;
+		}
+	}
+	
+	private void randomSpawn() {
+		if (generator.nextBoolean()) {
+			new Barrel(generator.nextInt((int) (screenSize.y-AssetManager.barrel.getHeight())));
+		} else {
+			new Balloon(getRandColor());
+		}
+	}
+	
 	@Override
 	public void tick() {
 		tickCount++;
-		//The barrel spawning needs work, its pretty terrible right now
-		if (generator.nextInt((999 - scoreCounter.score*10) / 10) == 0 && !hippie.isDead) {
-			if(generator.nextBoolean())
-				new Barrel(generator.nextInt((int) (screenSize.y-AssetManager.barrel.getHeight())));
-			else 
-				new Balloon(getRandColor());
-		} else if(hippie.isDead && !deathMenuCreated) {
+		// Spawning control
+		if (!hippie.isDead) {
+			if (tickCount % minimumSpawnTime == 0) {
+				randomSpawn();
+				return;
+			}
+			
+			if (scoreCounter.score < 10) {
+				minimumSpawnTime = 50;
+				if (generator.nextInt(600) == 0) {
+					//Event
+					if (generator.nextInt(3) > 1)
+						doEasyEvent();
+					else
+						doMediumEvent();
+					return;
+				}
+			} else if (scoreCounter.score < 20) {
+				minimumSpawnTime = 30;
+				if (generator.nextInt(400) == 0) {
+					//Event
+					if (generator.nextInt(3) > 2)
+						doEasyEvent();
+					else
+						doMediumEvent();
+					return;
+				}
+			} else if (scoreCounter.score < 30) {
+				minimumSpawnTime = 20;
+				if (generator.nextInt(400) == 0) {
+					//Event
+					doMediumEvent();
+					return;
+				}
+			} else if (scoreCounter.score < 40) {
+				minimumSpawnTime = 15;
+				if (generator.nextInt(400) == 0) {
+					//Event
+					doMediumEvent();
+					return;
+				}
+			}
+		}
+		
+		if(hippie.isDead && !deathMenuCreated) {
 			Game.activeGame.toBeRendered.remove(scoreCounter);
 			new DeathMenu();
 			deathMenuCreated = true;

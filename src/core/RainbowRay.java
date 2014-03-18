@@ -1,5 +1,7 @@
 package core;
 
+import objects.Balloon;
+
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -38,6 +40,25 @@ public class RainbowRay {
 		Game.activeGame.batch.draw(lastGenerated, location.x, location.y);
 		lastLocation = location;
 		lastCurve = curve;
+	}
+	
+	public static boolean isPopping(Balloon balloon) {
+		//Points on the balloon to be tested for collision
+		Vector2[] testPoints = new Vector2[] {
+				//Center of the balloon
+				new Vector2(balloon.location.x+(AssetManager.balloon.getWidth()/2), balloon.location.y+(AssetManager.balloon.getHeight()/2)-150),
+		};
+		
+		float curve = Game.activeGame.hippie.rainbowBendModifier;
+		
+		for (Vector2 vector : testPoints) {
+			float correctY = (float) ((Math.pow(vector.x, 2)*-curve)+150);
+			if (vector.y >= correctY && vector.y <= correctY+AssetManager.rainbow.getHeight()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public static Texture generateCurvedRainbow(float curve) {

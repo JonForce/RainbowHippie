@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import core.AssetManager;
 import core.Game;
 import core.RainbowHippie;
+import core.RainbowRay;
 import core.Renderable;
 import core.Tickable;
 
@@ -14,7 +15,7 @@ public class Balloon implements Renderable, Tickable {
 	
 	public Color color;
 	
-	private Vector2 location = new Vector2();
+	public Vector2 location = new Vector2();
 	private float moveSpeed;
 	public float verticalAmountModifier = 100, verticalSpeedModifier = 100;
 	
@@ -67,32 +68,32 @@ public class Balloon implements Renderable, Tickable {
 		if (isSwerving)
 			location.y += (float) (Math.sin(location.x/verticalAmountModifier) * verticalSpeedModifier);
 		
-		//if (RainbowHippie.activeHippie.rainbowCollisionTest.test(getCenter()) && RainbowHippie.activeHippie.isRainbowing && !color.equals(Color.WHITE))
-		//	pop();
+		//System.out.println(RainbowRay.isPopping(this));
+		if (RainbowRay.isPopping(this) && RainbowHippie.activeHippie.isRainbowing)
+			pop();
 		
 		if(location.x < Game.activeGame.hippie.location.x && !behindPlayer) {
 			// If the player's score is below 0, kill him
-			/*
 			if (Game.activeGame.scoreCounter.score > 1)
 				Game.activeGame.scoreCounter.score --;
 			else
 				Game.activeGame.hippie.die();
-			*/
 			behindPlayer = true;
 		}
 		
 		if(location.x <= 0-activeTexture.getWidth()) {
 			dispose();
+			Game.activeGame.scoreCounter.score --;
 		}
 	}
-
+	
 	@Override
 	public void render() {
 		Game.activeGame.batch.setColor(color);
 		Game.activeGame.batch.draw(activeTexture, location.x, location.y, srcX, srcY, srcWidth, srcHeight);
 		Game.activeGame.batch.setColor(Color.WHITE);
 	}
-
+	
 	private void animate(int frames, Texture spriteSheet) {
 		if (frameDelay <= 0) {
 			frameDelay = 2;
@@ -100,7 +101,7 @@ public class Balloon implements Renderable, Tickable {
 				frame = 0;
 			else
 				frame++;
-
+			
 			activeTexture = spriteSheet;
 			srcX = frame * (spriteSheet.getWidth() / frames);
 			srcY = 0;
