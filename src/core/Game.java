@@ -238,7 +238,7 @@ public class Game implements ApplicationListener, Tickable {
 			new Dolphin();
 		}
 		
-		// Spawning control
+		// Barrel and Balloon spawning control
 		if (!hippie.isDead) {
 			if (tickCount % minimumSpawnTime == 0) {
 				randomSpawn();
