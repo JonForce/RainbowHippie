@@ -14,6 +14,7 @@ import objects.Balloon;
 import objects.Barrel;
 import aesthetics.Background;
 import aesthetics.Dolphin;
+import aesthetics.Intro;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -26,13 +27,11 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Game implements ApplicationListener, Tickable {
 	
-	public static boolean hasFinishedIntro = true;
 	public static final Vector2 screenSize = new Vector2(1200, 700);
 	public static final Vector2 startPosition = new Vector2((Game.screenSize.x/2)-200,(Game.screenSize.y/2)-200);
 	public static final Vector2 center = new Vector2((Game.screenSize.x/2),(Game.screenSize.y/2));
@@ -45,7 +44,8 @@ public class Game implements ApplicationListener, Tickable {
 	private Timer clock;
 	private int tickCount = 0;
 	private int minimumSpawnTime = 400;
-	
+
+	public Intro intro;
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
@@ -124,6 +124,14 @@ public class Game implements ApplicationListener, Tickable {
 		AssetManager.bgMusic.play();
 	}
 	
+	public void createMenu() {
+		Background.load();
+		// Create our hippie
+		hippie = new RainbowHippie();
+		
+		RainbowRay.load();
+	}
+	
 	@Override
 	public void create() {
 		// Initialization, same for all platforms
@@ -138,7 +146,6 @@ public class Game implements ApplicationListener, Tickable {
 
 		GLTexture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
-		Background.load();
 		
 		// Start ticking thread
 		clock = new Timer();
@@ -161,11 +168,9 @@ public class Game implements ApplicationListener, Tickable {
 				}
 			}
 		}, 0, 50);
-
-		// Create our hippie
-		hippie = new RainbowHippie();
 		
-		RainbowRay.load();
+		intro = new Intro();
+		intro.play();
 	}
 	
 	@Override
