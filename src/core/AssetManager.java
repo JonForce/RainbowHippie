@@ -21,23 +21,13 @@ public class AssetManager {
 	
 	//Objects
 	public static Texture barrel, balloon;
+	public static Texture dolphin, whale;
 	
 	//Effects
 	public static Texture gasTrail, rainbow;
 	public static Music bgMusic;
 	
 	public static void loadAssets() {
-		/*
-		intro = new Texture[133];
-		for (int i = 1; i != 133; i ++) {
-			if ((i >= 2 && i <= 12) ||
-				(i >= 51 && i <= 53) ||
-				(i >= 92 && i <= 118))
-				continue;
-			intro[i] = new Texture(Gdx.files.internal("assets/intro/Frame ("+i+").jpg"));
-		}
-		*/
-		
 		fly = new Texture(Gdx.files.internal("assets/sprite/fly.png"));
 		flyHold = new Texture(Gdx.files.internal("assets/sprite/flyhold.png"));
 		flyRainbowing = new Texture(Gdx.files.internal("assets/sprite/rainbowfly.png"));
@@ -70,6 +60,8 @@ public class AssetManager {
 		
 		barrel = new Texture(Gdx.files.internal("assets/sprite/barrel.png"));
 		balloon = new Texture(Gdx.files.internal("assets/sprite/balloon.png"));
+		dolphin = new Texture(Gdx.files.internal("assets/sprite/dolphin.png"));
+		whale = new Texture(Gdx.files.internal("assets/sprite/whale.png"));
 		
 		gasTrail = new Texture(Gdx.files.internal("assets/sprite/Gas_Trail.png"));
 		rainbow = new Texture(Gdx.files.internal("assets/sprite/rainbow.png"));

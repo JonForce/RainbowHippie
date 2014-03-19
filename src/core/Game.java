@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import objects.Balloon;
 import objects.Barrel;
 import aesthetics.Background;
+import aesthetics.Dolphin;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -139,7 +140,7 @@ public class Game implements ApplicationListener, Tickable {
 		AssetManager.loadAssets();
 		Background.load();
 		
-		// Start animation thread
+		// Start ticking thread
 		clock = new Timer();
 		clock.scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -231,6 +232,12 @@ public class Game implements ApplicationListener, Tickable {
 	@Override
 	public void tick() {
 		tickCount++;
+		
+		// Occasionally spawn a dolphin
+		if (generator.nextInt(300) == 0) {
+			new Dolphin();
+		}
+		
 		// Spawning control
 		if (!hippie.isDead) {
 			if (tickCount % minimumSpawnTime == 0) {
