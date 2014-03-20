@@ -1,5 +1,7 @@
 package gui;
 
+import aesthetics.Intro;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
@@ -48,7 +50,7 @@ public class StartSign extends GuiImage implements Tickable {
 		if (Gdx.input.isTouched() && active) {
 			if (hasReleased) {
 				//Check if the click was in the area of the screen that triggers the start of the game
-				if (Game.activeGame.intro.finished && Gdx.input.getX() >= Game.center.x-100 && Gdx.input.getX() <= Game.center.x+55 &&
+				if (Intro.finished && Gdx.input.getX() >= Game.center.x-100 && Gdx.input.getX() <= Game.center.x+55 &&
 						Game.screenSize.y - Gdx.input.getY() >= Game.center.y-85 && Game.screenSize.y - Gdx.input.getY() <= Game.center.y-10) {
 					//Start the game
 					Game.activeGame.start();
