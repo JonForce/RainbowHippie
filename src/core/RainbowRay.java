@@ -14,11 +14,8 @@ public class RainbowRay {
 	public static Pixmap mapA, mapB;
 	public static TextureData data;
 	
-	private static Texture lastGenerated;
-	private static Vector2 lastLocation = new Vector2(0,0);
-	private static float lastCurve = 1;
-	
-	public static int timesRendered = 0, timesGenerated = 0;
+	public static Texture[] generatedRainbows;
+	private static final float curveInterval = .00003f;
 	
 	public static void load() {
 		data = AssetManager.rainbow.getTextureData();
@@ -26,34 +23,36 @@ public class RainbowRay {
 		mapB = new Pixmap((int)(Game.screenSize.x), (int)(Game.screenSize.y), Format.RGBA8888);
 		data.prepare();
 		mapA = data.consumePixmap();
-		lastGenerated = generateCurvedRainbow(1);
+		
+		generatedRainbows = new Texture[60];
+		for (int i = 0; i != generatedRainbows.length; i ++) {
+			generatedRainbows[i] = generateCurvedRainbow(i*curveInterval);
+		}
 	}
 	
 	public static void render(float curve, Vector2 location) {
-		float deltaCurve = Math.abs(lastCurve-curve);
-		
-		if (deltaCurve > .000041) {
-			lastGenerated = generateCurvedRainbow(curve);
-			timesGenerated ++;
-			mapB.dispose();
-		}
-		timesRendered ++;
-		Game.activeGame.batch.draw(lastGenerated, location.x, location.y);
-		lastLocation = location;
-		lastCurve = curve;
+		int index = (int) (curve/curveInterval);
+		if (index < 0)
+			Game.activeGame.batch.draw(generatedRainbows[-index], location.x, location.y-AssetManager.rainbow.getHeight(), location.x, location.y, generatedRainbows[-index].getWidth(), generatedRainbows[-index].getHeight(), 1, 1, 0, 0, 0, generatedRainbows[-index].getWidth(), generatedRainbows[-index].getHeight(), false, true);
+		else
+			Game.activeGame.batch.draw(generatedRainbows[index], location.x, location.y);
 	}
 	
 	public static boolean isPopping(Balloon balloon) {
 		//Points on the balloon to be tested for collision
 		Vector2[] testPoints = new Vector2[] {
 				//Center of the balloon
-				new Vector2(balloon.location.x+(AssetManager.balloon.getWidth()/2), balloon.location.y+(AssetManager.balloon.getHeight()/2)-150),
+				new Vector2(balloon.location.x+(AssetManager.balloon.getWidth()/2), balloon.location.y+(AssetManager.balloon.getHeight()/2)+50),
+				//Top of the balloon
+				new Vector2(balloon.location.x+(AssetManager.balloon.getWidth()/2), balloon.location.y+(AssetManager.balloon.getHeight()/2)+100),
+				//Bottom of the balloon
+				new Vector2(balloon.location.x+(AssetManager.balloon.getWidth()/2), balloon.location.y+(AssetManager.balloon.getHeight()/2)+10)
 		};
 		
 		float curve = Game.activeGame.hippie.rainbowBendModifier;
 		
 		for (Vector2 vector : testPoints) {
-			float correctY = (float) ((Math.pow(vector.x, 2)*-curve)+150);
+			float correctY = (float) ((Math.pow(vector.x-130, 2)*-curve) + RainbowHippie.activeHippie.location.y + AssetManager.rainbow.getHeight());
 			if (vector.y >= correctY && vector.y <= correctY+AssetManager.rainbow.getHeight()) {
 				return true;
 			}

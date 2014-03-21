@@ -1,6 +1,7 @@
 package core;
 
 import gui.DeathMenu;
+import gui.GuiImage;
 import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
@@ -44,7 +45,7 @@ public class Game implements ApplicationListener, Tickable {
 	private Timer clock;
 	private int tickCount = 0;
 	private int minimumSpawnTime = 400;
-
+	
 	public Intro intro;
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
@@ -93,6 +94,10 @@ public class Game implements ApplicationListener, Tickable {
 		Game.activeGame.toBeRendered.add(scoreCounter);
 		scoreCounter.reset();
 		RainbowHippie.activeHippie.reset();
+		deathMenuCreated = false;
+	}
+	
+	public void clearEntitys() {
 		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
 			Tickable t = toBeTicked.get(i);
 			if(t instanceof Balloon || t instanceof Barrel) {
@@ -105,7 +110,6 @@ public class Game implements ApplicationListener, Tickable {
 				toBeRendered.remove(r);
 			}
 		}
-		deathMenuCreated = false;
 	}
 	
 	public void quit() {
@@ -126,9 +130,7 @@ public class Game implements ApplicationListener, Tickable {
 	
 	public void createMenu() {
 		Background.load();
-		// Create our hippie
 		hippie = new RainbowHippie();
-		
 		RainbowRay.load();
 	}
 	
@@ -169,8 +171,10 @@ public class Game implements ApplicationListener, Tickable {
 			}
 		}, 0, 50);
 		
-		intro = new Intro();
-		intro.play();
+		createMenu();
+		intro.finished = true;
+		//intro = new Intro();
+		//intro.play();
 	}
 	
 	@Override
@@ -198,6 +202,7 @@ public class Game implements ApplicationListener, Tickable {
 	
 	@Override
 	public void resize(int x, int y) {
+		
 	}
 	
 	private void doEasyEvent() {
@@ -253,7 +258,6 @@ public class Game implements ApplicationListener, Tickable {
 			if (scoreCounter.score < 10) {
 				minimumSpawnTime = 50;
 				if (generator.nextInt(600) == 0) {
-					//Event
 					if (generator.nextInt(3) > 1)
 						doEasyEvent();
 					else
@@ -263,7 +267,6 @@ public class Game implements ApplicationListener, Tickable {
 			} else if (scoreCounter.score < 20) {
 				minimumSpawnTime = 30;
 				if (generator.nextInt(400) == 0) {
-					//Event
 					if (generator.nextInt(3) > 2)
 						doEasyEvent();
 					else
@@ -273,14 +276,12 @@ public class Game implements ApplicationListener, Tickable {
 			} else if (scoreCounter.score < 30) {
 				minimumSpawnTime = 20;
 				if (generator.nextInt(400) == 0) {
-					//Event
 					doMediumEvent();
 					return;
 				}
 			} else if (scoreCounter.score < 40) {
 				minimumSpawnTime = 15;
 				if (generator.nextInt(400) == 0) {
-					//Event
 					doMediumEvent();
 					return;
 				}

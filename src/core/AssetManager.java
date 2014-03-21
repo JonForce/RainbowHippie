@@ -71,6 +71,6 @@ public class AssetManager {
 		bgMusic.setVolume(.1f);
 		bgMusic.setLooping(true);
 		
-		introSong = Gdx.audio.newSound(Gdx.files.internal("assets/music/jingle.mp3"));
+		//introSong = Gdx.audio.newSound(Gdx.files.internal("assets/music/jingle.mp3"));
 	}
 }

@@ -128,6 +128,7 @@ public class RainbowHippie implements Renderable, Tickable {
 			state = HIDDEN;
 			frame = 0;
 			isDead = true;
+			Game.activeGame.clearEntitys();
 		}
 	}
 	
