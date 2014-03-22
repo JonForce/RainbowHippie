@@ -1,10 +1,6 @@
 package objects;
 
-import gui.ScoreCounter;
-
 import java.util.Random;
-
-import aesthetics.Partical;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
@@ -28,7 +24,6 @@ public class Barrel implements Renderable, Tickable {
 	public float velocity;
 	
 	public Sprite sprite;
-	public Partical smoke;
 	
 	public Barrel(float y) {
 		location = new Vector2(Game.screenSize.x+50,y);

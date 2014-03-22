@@ -26,6 +26,7 @@ public class AssetManager {
 	
 	//Effects
 	public static Texture gasTrail, rainbow;
+	public static Texture plusOne, minusTwo;
 	public static Music bgMusic;
 	public static Sound introSong;
 	
@@ -67,10 +68,10 @@ public class AssetManager {
 		
 		gasTrail = new Texture(Gdx.files.internal("assets/sprite/Gas_Trail.png"));
 		rainbow = new Texture(Gdx.files.internal("assets/sprite/rainbow.png"));
+		plusOne = new Texture(Gdx.files.internal("assets/ui/+1.png"));
+		minusTwo = new Texture(Gdx.files.internal("assets/ui/-2.png"));
 		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/music/bg.wav"));
 		bgMusic.setVolume(.1f);
 		bgMusic.setLooping(true);
-		
-		//introSong = Gdx.audio.newSound(Gdx.files.internal("assets/music/jingle.mp3"));
 	}
 }

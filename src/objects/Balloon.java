@@ -1,5 +1,7 @@
 package objects;
 
+import gui.GuiImage;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -16,14 +18,14 @@ public class Balloon implements Renderable, Tickable {
 	public Color color;
 	
 	public Vector2 location = new Vector2();
-	private float moveSpeed;
+	public float moveSpeed;
 	public float verticalAmountModifier = 100, verticalSpeedModifier = 100;
 	
 	public Texture activeTexture;
 	public int srcX, srcY, srcWidth, srcHeight;
 	private int frame = 0, frameDelay = 5;
 	
-	private boolean isSwerving, behindPlayer;
+	public boolean isSwerving;
 	
 	public Balloon(Color color) {
 		this.color = new Color(color);
@@ -54,6 +56,7 @@ public class Balloon implements Renderable, Tickable {
 	public void pop() {
 		Game.activeGame.scoreCounter.score ++;
 		dispose();
+		new GuiImage(AssetManager.plusOne, new Vector2(location.x-50, location.y+100)).fadeAway(.1f);
 	}
 	
 	public void dispose() {
@@ -68,22 +71,17 @@ public class Balloon implements Renderable, Tickable {
 		if (isSwerving)
 			location.y += (float) (Math.sin(location.x/verticalAmountModifier) * verticalSpeedModifier);
 		
-		//System.out.println(RainbowRay.isPopping(this));
 		if (RainbowRay.isPopping(this) && RainbowHippie.activeHippie.isRainbowing)
 			pop();
 		
-		if(location.x < Game.activeGame.hippie.location.x && !behindPlayer) {
+		if(location.x < Game.activeGame.hippie.location.x) {
 			// If the player's score is below 0, kill him
 			if (Game.activeGame.scoreCounter.score > 1)
-				Game.activeGame.scoreCounter.score --;
+				Game.activeGame.scoreCounter.score -=2;
 			else
 				Game.activeGame.hippie.die();
-			behindPlayer = true;
-		}
-		
-		if(location.x <= 0-activeTexture.getWidth()) {
+			new GuiImage(AssetManager.minusTwo, new Vector2(10, location.y+100)).fadeAway(.1f);
 			dispose();
-			Game.activeGame.scoreCounter.score --;
 		}
 	}
 	

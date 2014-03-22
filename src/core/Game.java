@@ -15,7 +15,6 @@ import objects.Balloon;
 import objects.Barrel;
 import aesthetics.Background;
 import aesthetics.Dolphin;
-import aesthetics.Intro;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -43,10 +42,7 @@ public class Game implements ApplicationListener, Tickable {
 	public static Preferences prefs;
 	
 	private Timer clock;
-	private int tickCount = 0;
-	private int minimumSpawnTime = 400;
 	
-	public Intro intro;
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
@@ -59,6 +55,7 @@ public class Game implements ApplicationListener, Tickable {
 	public PauseSign pauseSign;
 	public QuitButton quitButton;
 	public ScoreCounter scoreCounter;
+	public EntitySpawner entitySpawner;
 	
 	public static void main(String[] args) {
 		// Use the desktop configuration
@@ -84,6 +81,7 @@ public class Game implements ApplicationListener, Tickable {
 		pauseSign = new PauseSign();
 		quitButton = new QuitButton();
 		scoreCounter = new ScoreCounter();
+		entitySpawner = new EntitySpawner();
 		Background.startMovingClouds();
 		AssetManager.bgMusic.play();
 		
@@ -154,6 +152,7 @@ public class Game implements ApplicationListener, Tickable {
 		clock.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
+				System.out.println(toBeTicked.size());
 				for (int i = 0; i <= toBeTicked.size() - 1; i++) {
 					Tickable t = toBeTicked.get(i);
 					if(pauseSign != null) {
@@ -172,9 +171,6 @@ public class Game implements ApplicationListener, Tickable {
 		}, 0, 50);
 		
 		createMenu();
-		intro.finished = true;
-		//intro = new Intro();
-		//intro.play();
 	}
 	
 	@Override
@@ -188,7 +184,7 @@ public class Game implements ApplicationListener, Tickable {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 		
-		logger.log();
+		//logger.log();
 		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
@@ -205,87 +201,11 @@ public class Game implements ApplicationListener, Tickable {
 		
 	}
 	
-	private void doEasyEvent() {
-		if (generator.nextBoolean()) {
-			new Barrel(100);
-			new Barrel(170);
-			new Balloon(getRandColor()).location.y = 125;
-			new Balloon(getRandColor()).location.y = 200;
-		} else {
-			new Barrel(screenSize.y-100-AssetManager.barrel.getHeight());
-			new Barrel(screenSize.y-170-AssetManager.barrel.getHeight());
-			new Balloon(getRandColor()).location.y = screenSize.y-125-AssetManager.barrel.getHeight();
-			new Balloon(getRandColor()).location.y = screenSize.y-200-AssetManager.barrel.getHeight();
-		}
-	}
-	
-	private void doMediumEvent() {
-		if (generator.nextBoolean()) {
-			new Barrel(100).velocity = 15;
-			new Barrel(170).velocity = 15;
-			new Barrel(250).velocity = 15;
-		} else {
-			new Barrel(screenSize.y-100-AssetManager.barrel.getHeight()).velocity = 15;
-			new Barrel(screenSize.y-170-AssetManager.barrel.getHeight()).velocity = 15;
-			new Barrel(screenSize.y-250-AssetManager.barrel.getHeight()).velocity = 15;
-		}
-	}
-	
-	private void randomSpawn() {
-		if (generator.nextBoolean()) {
-			new Barrel(generator.nextInt((int) (screenSize.y-AssetManager.barrel.getHeight())));
-		} else {
-			new Balloon(getRandColor());
-		}
-	}
-	
 	@Override
 	public void tick() {
-		tickCount++;
-		
 		// Occasionally spawn a dolphin
 		if (generator.nextInt(300) == 0) {
 			new Dolphin();
-		}
-		
-		// Barrel and Balloon spawning control
-		if (!hippie.isDead) {
-			if (tickCount % minimumSpawnTime == 0) {
-				randomSpawn();
-				return;
-			}
-			
-			if (scoreCounter.score < 10) {
-				minimumSpawnTime = 50;
-				if (generator.nextInt(600) == 0) {
-					if (generator.nextInt(3) > 1)
-						doEasyEvent();
-					else
-						doMediumEvent();
-					return;
-				}
-			} else if (scoreCounter.score < 20) {
-				minimumSpawnTime = 30;
-				if (generator.nextInt(400) == 0) {
-					if (generator.nextInt(3) > 2)
-						doEasyEvent();
-					else
-						doMediumEvent();
-					return;
-				}
-			} else if (scoreCounter.score < 30) {
-				minimumSpawnTime = 20;
-				if (generator.nextInt(400) == 0) {
-					doMediumEvent();
-					return;
-				}
-			} else if (scoreCounter.score < 40) {
-				minimumSpawnTime = 15;
-				if (generator.nextInt(400) == 0) {
-					doMediumEvent();
-					return;
-				}
-			}
 		}
 		
 		if(hippie.isDead && !deathMenuCreated) {
@@ -293,22 +213,5 @@ public class Game implements ApplicationListener, Tickable {
 			new DeathMenu();
 			deathMenuCreated = true;
 		}
-	}
-	
-	private Color getRandColor() {
-		int color = generator.nextInt(5);
-		switch(color){
-		case 0:
-			return Color.BLACK;
-		case 1:
-			return Color.WHITE;
-		case 2:
-			return Color.RED;
-		case 3:
-			return Color.BLUE;
-		case 4:
-			return Color.GREEN;
-		}
-		return Color.WHITE;
 	}
 }
