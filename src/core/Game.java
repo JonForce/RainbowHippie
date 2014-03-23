@@ -95,6 +95,7 @@ public class Game implements ApplicationListener, Tickable {
 		scoreCounter.reset();
 		RainbowHippie.activeHippie.reset();
 		deathMenuCreated = false;
+		entitySpawner.reset();
 	}
 	
 	public void clearEntitys() {

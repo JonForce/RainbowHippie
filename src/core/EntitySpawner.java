@@ -24,6 +24,11 @@ public class EntitySpawner implements Tickable {
 		changeSafeLocation();
 		Game.activeGame.toBeTicked.add(this);
 	}
+	
+	public void reset() {
+		safeLocationChangeTime = 200;
+		spawnRate = 50;
+	}
 
 	@Override
 	public void tick() {
