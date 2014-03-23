@@ -14,7 +14,6 @@ public class AssetManager {
 	public static Texture sign, logo;
 	public static Texture pause, pauseWindow, resumeButton, restartButton, quitButton, quitCloud, deathWindow, playAgain, facebook, twitter;
 	public static Texture font;
-	public static Texture[] intro;
 	
 	//Background images
 	public static Texture bg, mountain, rays;

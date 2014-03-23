@@ -16,8 +16,9 @@ public class RainbowRay {
 	
 	public static Texture[] generatedRainbows;
 	private static final float curveInterval = .00003f;
+	private static int rainbowsGenerated = 0;
 	
-	public static void load() {
+	public static void initialize() {
 		data = AssetManager.rainbow.getTextureData();
 		mapA = new Pixmap(data.getWidth(), data.getHeight(), data.getFormat());
 		mapB = new Pixmap((int)(Game.screenSize.x), (int)(Game.screenSize.y), Format.RGBA8888);
@@ -25,13 +26,22 @@ public class RainbowRay {
 		mapA = data.consumePixmap();
 		
 		generatedRainbows = new Texture[60];
-		for (int i = 0; i != generatedRainbows.length; i ++) {
-			generatedRainbows[i] = generateCurvedRainbow(i*curveInterval);
-		}
+	}
+	
+	public static void loadAStep() {
+		if (generatedRainbows[rainbowsGenerated] == null)
+			generatedRainbows[rainbowsGenerated] = generateCurvedRainbow(rainbowsGenerated*curveInterval);
+		rainbowsGenerated ++;
+		System.out.println("Loaded : " + ((rainbowsGenerated/60.0)*100.0) + "%");
 	}
 	
 	public static void render(float curve, Vector2 location) {
 		int index = (int) (curve/curveInterval);
+		
+		// If the requested image has not been generated, generate it
+		if (generatedRainbows[Math.abs(index)] == null)
+			generatedRainbows[Math.abs(index)] = generateCurvedRainbow(Math.abs(index)*curveInterval);
+		
 		if (index < 0)
 			Game.activeGame.batch.draw(generatedRainbows[-index], location.x, location.y-AssetManager.rainbow.getHeight(), location.x, location.y, generatedRainbows[-index].getWidth(), generatedRainbows[-index].getHeight(), 1, 1, 0, 0, 0, generatedRainbows[-index].getWidth(), generatedRainbows[-index].getHeight(), false, true);
 		else

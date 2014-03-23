@@ -20,6 +20,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
@@ -27,6 +28,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -129,7 +131,6 @@ public class Game implements ApplicationListener, Tickable {
 	public void createMenu() {
 		Background.load();
 		hippie = new RainbowHippie();
-		RainbowRay.load();
 	}
 	
 	@Override
@@ -152,7 +153,8 @@ public class Game implements ApplicationListener, Tickable {
 		clock.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				System.out.println(toBeTicked.size());
+				if (toBeTicked.size() > 40)
+					System.out.println("Warning! There are " + toBeTicked.size() + " tickables!");
 				for (int i = 0; i <= toBeTicked.size() - 1; i++) {
 					Tickable t = toBeTicked.get(i);
 					if(pauseSign != null) {
@@ -170,7 +172,36 @@ public class Game implements ApplicationListener, Tickable {
 			}
 		}, 0, 50);
 		
-		createMenu();
+		//Interpolate the playing of the intro and the loading of the RainbowRay
+		RainbowRay.initialize();
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/intro/audio/jingle.mp3"));
+		music.setVolume(.1f);
+		music.setLooping(false);
+		music.play();
+		Renderable r = new Renderable() {
+			int i = 0;
+			Texture activeFrame = null;
+			@Override
+			public void render() {
+				if (i < 133) {
+					if (Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg").exists())
+						activeFrame = new Texture(Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg"));
+					
+					batch.draw(activeFrame, 0, 0, activeFrame.getWidth()*1.25f, activeFrame.getHeight()*1.3f);
+					
+					// Generate a texture every 15 frames during intro, until the intro is complete
+					//		then generate the rest of them when needed
+					if (i % 15 == 0) {
+						RainbowRay.loadAStep();
+					}
+				} else {
+					Game.activeGame.toBeRendered.remove(this);
+					createMenu();
+				}
+				i ++;
+			}
+		};
+		toBeRendered.add(r);
 	}
 	
 	@Override
