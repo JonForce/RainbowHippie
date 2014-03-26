@@ -53,10 +53,32 @@ public class Balloon implements Renderable, Tickable {
 		return new Vector2(location.x+(activeTexture.getWidth()/2), location.y+(activeTexture.getHeight()/2));
 	}
 	
+	/**
+	 * If at least half of the balloon is visible on the screen.
+	 */
+	public boolean onScreen() {
+		return (location.x+(activeTexture.getWidth()/7) < Game.screenSize.x);
+	}
+	
 	public void pop() {
-		Game.activeGame.scoreCounter.score ++;
-		dispose();
-		new GuiImage(AssetManager.plusOne, new Vector2(location.x-50, location.y+100)).fadeAway(.1f);
+		if (!onScreen())
+			return;
+		
+		if (color.equals(Color.BLACK)) {
+			Game.activeGame.scoreCounter.score -= 2;
+			new GuiImage(AssetManager.minusTwo, new Vector2(location.x-50, location.y+100)).fadeAway(.1f);
+			if (Game.generator.nextBoolean())
+				location.y -= 100;
+			else
+				location.y += 100;
+			
+			if (Game.activeGame.scoreCounter.score <= 1)
+				Game.activeGame.hippie.die();
+		} else {
+			Game.activeGame.scoreCounter.score ++;
+			dispose();
+			new GuiImage(AssetManager.plusOne, new Vector2(location.x-50, location.y+100)).fadeAway(.1f);
+		}
 	}
 	
 	public void dispose() {
@@ -74,13 +96,16 @@ public class Balloon implements Renderable, Tickable {
 		if (RainbowRay.isPopping(this) && RainbowHippie.activeHippie.isRainbowing)
 			pop();
 		
-		if(location.x < Game.activeGame.hippie.location.x) {
-			// If the player's score is below 0, kill him
-			if (Game.activeGame.scoreCounter.score > 1)
-				Game.activeGame.scoreCounter.score -=2;
-			else
-				Game.activeGame.hippie.die();
-			new GuiImage(AssetManager.minusTwo, new Vector2(10, location.y+100)).fadeAway(.1f);
+		if(location.x < -AssetManager.balloon.getWidth()) {
+			if (!color.equals(Color.BLACK)) {
+				// If the player's score is below 0, kill him
+				if (Game.activeGame.scoreCounter.score > 1)
+					Game.activeGame.scoreCounter.score -=2;
+				else
+					Game.activeGame.hippie.die();
+				
+				new GuiImage(AssetManager.minusTwo, new Vector2(10, location.y+100)).fadeAway(.1f);
+			}
 			dispose();
 		}
 	}

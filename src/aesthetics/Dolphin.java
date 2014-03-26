@@ -20,7 +20,7 @@ public class Dolphin extends Sprite implements Tickable, Renderable {
 		location = new Vector2(Game.generator.nextInt(100), -10);
 		rotation = 45f;
 		torque = -1.5f;
-		peakY = 100+Game.generator.nextInt(100);
+		peakY = 100+Game.generator.nextInt(60);
 		update();
 		
 		Game.activeGame.toBeRendered.remove(Background.cloudsA[0]);
@@ -30,7 +30,7 @@ public class Dolphin extends Sprite implements Tickable, Renderable {
 		Game.activeGame.toBeRendered.add(Background.cloudsB[0]);
 		Game.activeGame.toBeTicked.add(this);
 	}
-
+	
 	@Override
 	public void tick() {
 		rotation += torque;
@@ -44,7 +44,7 @@ public class Dolphin extends Sprite implements Tickable, Renderable {
 		this.setPosition(location.x, location.y);
 		this.setRotation(rotation);
 	}
-
+	
 	@Override
 	public void render() {
 		this.draw(Game.activeGame.batch);

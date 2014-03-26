@@ -48,9 +48,9 @@ public class RainbowHippie implements Renderable, Tickable {
 		activeHippie = this;
 		location = Game.startPosition;
 		activeTexture = AssetManager.fly;
+		boundingBox = new Rectangle(0, 0, hippieSize.x - 30, hippieSize.y - 30);
 		Game.activeGame.toBeRendered.add(this);
 		Game.activeGame.toBeTicked.add(this);
-		boundingBox = new Rectangle(0, 0, hippieSize.x - 30, hippieSize.y - 30);
 	}
 	
 	@Override
@@ -101,13 +101,16 @@ public class RainbowHippie implements Renderable, Tickable {
 				location.y += amountToMoveY;
 				rainbowBendModifier = (amountToMoveY / 50) / 1000;
 			}
+			
+			// Cap the rainbow bend
+			if (rainbowBendModifier > 3.25E-4f)
+				rainbowBendModifier = 3.25E-4f;
 		} else if (state == HOLDING) {
 			animate(7, AssetManager.flyHold);
 			sign.useFrame(frame);
 			sign.visible = true;
 			
-			// Assert that hippie may not move, and that he is at the start
-			// position
+			// Assert that hippie may not move, and that he is at the start position
 			lockedX = true;
 			lockedY = true;
 			location = Game.startPosition;

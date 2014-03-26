@@ -17,7 +17,8 @@ public class EntitySpawner implements Tickable {
 	public int spawnRate = 50;
 	
 	private int tickCount = 1;
-	private boolean hasIncreasedDifficulty;
+	private boolean hasChangedDifficulty;
+	private int previousScore = 1;
 	
 	public EntitySpawner() {
 		safeArea = SAFE_LOW;
@@ -35,7 +36,10 @@ public class EntitySpawner implements Tickable {
 		if (tickCount % safeLocationChangeTime == 0)
 			changeSafeLocation();
 		
-		checkForDifficultyIncrease();
+		if (Game.activeGame.scoreCounter.score > previousScore)
+			checkForDifficultyIncrease();
+		else
+			checkForDifficultyDecrease();
 		
 		if (tickCount % spawnRate == 0 && !RainbowHippie.activeHippie.isDead) {
 			if (Game.generator.nextFloat() < balloonVsBarrelSpawnChance)
@@ -44,6 +48,7 @@ public class EntitySpawner implements Tickable {
 				spawnBalloon();
 		}
 		
+		previousScore = Game.activeGame.scoreCounter.score;
 		tickCount ++;
 	}
 	private void spawnEnemy() {
@@ -57,7 +62,7 @@ public class EntitySpawner implements Tickable {
 		} else if (safeArea == SAFE_LOW) {
 			new Barrel((Game.screenSize.y/2)+Game.generator.nextInt((int) ((Game.screenSize.y/2)-hippieDistanceFromTop)));
 		} else {
-			System.err.println("Error : cannot set safe area to somthing other than 0, 1 or 2");
+			System.err.println("Error (EntitySpawner) : cannot set safe area to somthing other than 0, 1 or 2");
 			System.exit(1);
 		}
 	}
@@ -88,27 +93,30 @@ public class EntitySpawner implements Tickable {
 	
 	private void checkForDifficultyIncrease() {
 		if (Game.activeGame.scoreCounter.score % 10 == 0) {
-			if (!hasIncreasedDifficulty) {
+			if (!hasChangedDifficulty) {
 				safeLocationChangeTime *= .85;
 				spawnRate *= .8;
-				hasIncreasedDifficulty = true;
-				System.out.println("Increased difficulty!");
-				System.out.println("   spawnRate : " + spawnRate);
-				System.out.println("   safeLocationChangeTime : " + safeLocationChangeTime);
+				hasChangedDifficulty = true;
 			}
 		} else {
-			hasIncreasedDifficulty = false;
+			hasChangedDifficulty = false;
+		}
+	}
+	
+	private void checkForDifficultyDecrease() {
+		if (Game.activeGame.scoreCounter.score % 10 == 0) {
+			if (!hasChangedDifficulty) {
+				safeLocationChangeTime *= 1.15;
+				spawnRate *= 1.2;
+				hasChangedDifficulty = true;
+			}
+		} else {
+			hasChangedDifficulty = false;
 		}
 	}
 	
 	public void changeSafeLocation() {
 		safeArea = Game.generator.nextInt(3);
-		if (safeArea == SAFE_LOW)
-			System.out.println("Changed safe area to low");
-		else if (safeArea == SAFE_MIDDLE)
-			System.out.println("Changed safe area to middle");
-		else if (safeArea == SAFE_HIGH)
-			System.out.println("Changed safe area to high");
 	}
 	
 	private Color getRandColor() {
