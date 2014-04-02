@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 public class RainbowHippie implements Renderable, Tickable {
 	
 	public static RainbowHippie activeHippie;
+	public static boolean usesTouchControls = false;
 	
 	// Enumerator
 	public static final int FLYING = 0;
@@ -70,16 +71,30 @@ public class RainbowHippie implements Renderable, Tickable {
 		// Move bounding box to the center of our hippie
 		boundingBox.setCenter(new Vector2(location.x + hippieSize.x / 2, location.y + hippieSize.y / 2 + 10));
 		
-		isRainbowing = Gdx.input.isButtonPressed(Buttons.RIGHT);
+		if (!usesTouchControls) {
+			if (Gdx.input.isButtonPressed(Buttons.LEFT))
+				momentum.y += jumpAmount;
+			isRainbowing = Gdx.input.isButtonPressed(Buttons.RIGHT);
+		} else {
+			if (((Gdx.input.isTouched(0) && Gdx.input.getX(0) <= Game.screenSize.x/2) ||
+				(Gdx.input.isTouched(1) && Gdx.input.getX(1) <= Game.screenSize.x/2))) {
+				momentum.y += jumpAmount;
+			}
+			
+			if (((Gdx.input.isTouched(0) && Gdx.input.getX(0) >= Game.screenSize.x/2) ||
+					(Gdx.input.isTouched(1) && Gdx.input.getX(1) >= Game.screenSize.x/2))) {
+				isRainbowing = true;
+			} else {
+				isRainbowing = false;
+			}
+			
+		}
 		
 		// Update based on state
 		if (state == FLYING) {
 			// Animate
 			animate(7, AssetManager.fly);
 			sign.visible = false;
-			
-			if (Gdx.input.isButtonPressed(Buttons.LEFT))
-				momentum.y += jumpAmount;
 			
 			momentum.y += gravity;
 			
@@ -131,7 +146,6 @@ public class RainbowHippie implements Renderable, Tickable {
 			state = HIDDEN;
 			frame = 0;
 			isDead = true;
-			Game.activeGame.clearEntitys();
 		}
 	}
 	

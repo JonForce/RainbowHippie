@@ -49,10 +49,6 @@ public class Balloon implements Renderable, Tickable {
 		Game.activeGame.toBeRendered.add(this);
 	}
 	
-	public Vector2 getCenter() {
-		return new Vector2(location.x+(activeTexture.getWidth()/2), location.y+(activeTexture.getHeight()/2));
-	}
-	
 	/**
 	 * If at least half of the balloon is visible on the screen.
 	 */
@@ -96,7 +92,7 @@ public class Balloon implements Renderable, Tickable {
 		if (RainbowRay.isPopping(this) && RainbowHippie.activeHippie.isRainbowing)
 			pop();
 		
-		if(location.x < -AssetManager.balloon.getWidth()) {
+		if(location.x < -(AssetManager.balloon.getWidth()/7)) {
 			if (!color.equals(Color.BLACK)) {
 				// If the player's score is below 0, kill him
 				if (Game.activeGame.scoreCounter.score > 1)

@@ -10,7 +10,7 @@ public class EntitySpawner implements Tickable {
 	public static final int SAFE_LOW = 0, SAFE_MIDDLE = 1, SAFE_HIGH = 2;
 	
 	// Closer to 0 yeilds more balloons, closer to 1 yeilds more barrels
-	public static final float balloonVsBarrelSpawnChance = .65f;
+	public static float balloonVsBarrelSpawnChance = .65f;
 	
 	public int safeArea;
 	public int safeLocationChangeTime = 200;

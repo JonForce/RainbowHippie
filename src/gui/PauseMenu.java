@@ -58,7 +58,6 @@ public class PauseMenu implements Tickable {
 						Game.activeGame.quit();
 					}
 				}
-				
 			}
 			hasReleased = false;
 		} else {

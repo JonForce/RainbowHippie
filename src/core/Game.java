@@ -1,7 +1,6 @@
 package core;
 
 import gui.DeathMenu;
-import gui.GuiImage;
 import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
@@ -23,7 +22,6 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
@@ -34,7 +32,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Game implements ApplicationListener, Tickable {
 	
-	public static final Vector2 screenSize = new Vector2(1200, 700);
+	public static Vector2 screenSize = new Vector2(1200, 700);
 	public static final Vector2 startPosition = new Vector2((Game.screenSize.x/2)-200,(Game.screenSize.y/2)-200);
 	public static final Vector2 center = new Vector2((Game.screenSize.x/2),(Game.screenSize.y/2));
 	public static Game activeGame;
@@ -42,17 +40,18 @@ public class Game implements ApplicationListener, Tickable {
 	public static FPSLogger logger = new FPSLogger();
 	
 	public static Preferences prefs;
-	
-	private Timer clock;
+	public Timer clock;
 	
 	public RainbowHippie hippie;
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
 	public boolean isPaused = false, deathMenuCreated = false;
+	public boolean shouldPlayIntro = true, shouldLoadDuringIntro = true;
 	
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
 	public ArrayList<Tickable> pausedTicked;
+	public int tickInterval = 45;
 	
 	public PauseSign pauseSign;
 	public QuitButton quitButton;
@@ -70,8 +69,6 @@ public class Game implements ApplicationListener, Tickable {
 		cfg.addIcon("assets/taskbar_icon.png", FileType.Internal);
 		cfg.addIcon("assets/window_icon.png", FileType.Internal);
 		new LwjglApplication(new Game(), cfg);
-		
-		prefs = Gdx.app.getPreferences("rh.prefs");
 	}
 	
 	public void start() {
@@ -96,21 +93,24 @@ public class Game implements ApplicationListener, Tickable {
 		RainbowHippie.activeHippie.reset();
 		deathMenuCreated = false;
 		entitySpawner.reset();
+		clearEntitys();
 	}
 	
 	public void clearEntitys() {
+		System.out.println("Clearing entitys, entities before clear "+toBeTicked.size()+". Entities after : ");
 		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
 			Tickable t = toBeTicked.get(i);
-			if(t instanceof Balloon || t instanceof Barrel) {
+			if(t instanceof Balloon || t instanceof Barrel || t instanceof Dolphin) {
 				toBeTicked.remove(t);
 			}
 		}
 		for(int i = 0; i <= toBeRendered.size() - 1; i++) {
 			Renderable r = toBeRendered.get(i);
-			if(r instanceof Balloon || r instanceof Barrel) {
+			if(r instanceof Balloon || r instanceof Barrel || r instanceof Dolphin) {
 				toBeRendered.remove(r);
 			}
 		}
+		System.out.print(toBeTicked.size()+"\n");
 	}
 	
 	public void quit() {
@@ -138,6 +138,8 @@ public class Game implements ApplicationListener, Tickable {
 	public void create() {
 		// Initialization, same for all platforms
 		activeGame = this;
+		prefs = Gdx.app.getPreferences("rh.prefs");
+		screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (int) screenSize.x, (int) screenSize.y);
 		batch = new SpriteBatch();
@@ -155,7 +157,7 @@ public class Game implements ApplicationListener, Tickable {
 			@Override
 			public void run() {
 				if (toBeTicked.size() > 40)
-					System.out.println("Warning! There are " + toBeTicked.size() + " tickables!");
+					System.out.println("Warning! There are " + toBeTicked.size() + " tickables! There is probably somthing wrong.");
 				for (int i = 0; i <= toBeTicked.size() - 1; i++) {
 					Tickable t = toBeTicked.get(i);
 					if(pauseSign != null) {
@@ -171,7 +173,7 @@ public class Game implements ApplicationListener, Tickable {
 					}
 				}
 			}
-		}, 0, 50);
+		}, 0, tickInterval);
 		
 		//Interpolate the playing of the intro and the loading of the RainbowRay
 		RainbowRay.initialize();
@@ -179,35 +181,39 @@ public class Game implements ApplicationListener, Tickable {
 		music.setVolume(.1f);
 		music.setLooping(false);
 		music.play();
-		Renderable r = new Renderable() {
-			int i = 0;
-			Texture activeFrame = null;
-			@Override
-			public void render() {
-				if (i < 133) {
-					if (Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg").exists())
-						activeFrame = new Texture(Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg"));
-					
-					batch.draw(activeFrame, 0, 0, activeFrame.getWidth()*1.25f, activeFrame.getHeight()*1.3f);
-					
-					// Generate a texture every 15 frames during intro, until the intro is complete
-					//		then generate the rest of them when needed
-					if (i % 15 == 0) {
-						RainbowRay.loadAStep();
+		if (shouldPlayIntro) {
+			Renderable r = new Renderable() {
+				int i = 0;
+				Texture activeFrame = null;
+				@Override
+				public void render() {
+					if (i < 133) {
+						if (Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg").exists())
+							activeFrame = new Texture(Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg"));
+						
+						batch.draw(activeFrame, 0, 0, activeFrame.getWidth()*1.25f, activeFrame.getHeight()*1.3f);
+						
+						// Generate a texture every 15 frames during intro, until the intro is complete
+						//		then generate the rest of them when needed
+						if (i % 15 == 0) {
+							RainbowRay.loadAStep();
+						}
+					} else {
+						Game.activeGame.toBeRendered.remove(this);
+						createMenu();
 					}
-				} else {
-					Game.activeGame.toBeRendered.remove(this);
-					createMenu();
+					i ++;
 				}
-				i ++;
-			}
-		};
-		toBeRendered.add(r);
+			};
+			toBeRendered.add(r);
+		} else {
+			createMenu();
+		}
 	}
 	
 	@Override
 	public void dispose() {
-		clock.cancel();
+		
 	}
 	
 	@Override
@@ -215,8 +221,6 @@ public class Game implements ApplicationListener, Tickable {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
-		
-		//logger.log();
 		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
@@ -230,7 +234,7 @@ public class Game implements ApplicationListener, Tickable {
 	
 	@Override
 	public void resize(int x, int y) {
-		
+		screenSize = new Vector2(x, y);
 	}
 	
 	@Override
