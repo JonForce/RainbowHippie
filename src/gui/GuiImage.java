@@ -11,7 +11,7 @@ import core.Tickable;
 
 public class GuiImage implements Renderable, Tickable {
 	
-	public Vector2 location;
+	public Vector2 location, size;
 	public Texture texture;
 	public boolean visible = true;
 	
@@ -19,8 +19,13 @@ public class GuiImage implements Renderable, Tickable {
 	private float alpha = 1;
 	
 	public GuiImage(Texture texture, Vector2 location) {
+		this(texture, location, new Vector2(texture.getWidth(), texture.getHeight()));
+	}
+	
+	public GuiImage(Texture texture, Vector2 location, Vector2 size) {
 		this.texture = texture;
 		this.location = location;
+		this.size = size;
 		Game.activeGame.toBeRendered.add(this);
 	}
 	
@@ -44,7 +49,7 @@ public class GuiImage implements Renderable, Tickable {
 			color.a = oldAlpha*alpha;
 			Game.activeGame.batch.setColor(color);
 			
-			Game.activeGame.batch.draw(texture, location.x, location.y);
+			Game.activeGame.batch.draw(texture, location.x, location.y, size.x, size.y);
 			
 			color.a = oldAlpha;
 			Game.activeGame.batch.setColor(color);

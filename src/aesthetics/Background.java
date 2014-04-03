@@ -5,6 +5,7 @@ import gui.GuiImage;
 import com.badlogic.gdx.math.Vector2;
 
 import core.AssetManager;
+import core.Game;
 
 public class Background {
 	
@@ -15,7 +16,7 @@ public class Background {
 	public static RecursiveImage[] cloudsB;
 	
 	public static void load() {
-		bg = new GuiImage(AssetManager.bg, new Vector2(0,0));
+		bg = new GuiImage(AssetManager.bg, new Vector2(0,0), new Vector2(Game.screenSize.x, Game.screenSize.y));
 		mountain = new GuiImage(AssetManager.mountain, new Vector2(0,0));
 		rays = new GuiImage(AssetManager.rays, new Vector2(0,0));
 		
