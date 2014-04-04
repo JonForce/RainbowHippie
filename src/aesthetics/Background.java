@@ -16,8 +16,13 @@ public class Background {
 	public static RecursiveImage[] cloudsB;
 	
 	public static void load() {
-		bg = new GuiImage(AssetManager.bg, new Vector2(0,0), new Vector2(Game.screenSize.x, Game.screenSize.y));
-		mountain = new GuiImage(AssetManager.mountain, new Vector2(0,0));
+		bg = new GuiImage(AssetManager.bg, new Vector2(0,0)) {
+			@Override
+			public void render() {
+				Game.activeGame.batch.draw(texture, location.x, location.y, Game.screenSize.x, Game.screenSize.y);
+			}
+		};
+		//mountain = new GuiImage(AssetManager.mountain, new Vector2(0,0));
 		
 		//rays = new GuiImage(AssetManager.rays, new Vector2(0,0));
 		

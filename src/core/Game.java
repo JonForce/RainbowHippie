@@ -98,7 +98,6 @@ public class Game implements ApplicationListener, Tickable {
 	}
 	
 	public void clearEntitys() {
-		System.out.println("Clearing entitys, entities before clear "+toBeTicked.size()+". Entities after : ");
 		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
 			Tickable t = toBeTicked.get(i);
 			if(t instanceof Balloon || t instanceof Barrel || t instanceof Dolphin) {
@@ -111,7 +110,6 @@ public class Game implements ApplicationListener, Tickable {
 				toBeRendered.remove(r);
 			}
 		}
-		System.out.print(toBeTicked.size()+"\n");
 	}
 	
 	public void quit() {
@@ -131,8 +129,9 @@ public class Game implements ApplicationListener, Tickable {
 	}
 	
 	public void createMenu() {
-		if (prefs.getBoolean("firstLaunch")) {
-			Instructions.start();
+		if (prefs.getBoolean("isFirstLaunch")) {
+			Background.load();
+			new Instructions();
 		} else {
 			Background.load();
 			hippie = new RainbowHippie();
@@ -155,6 +154,9 @@ public class Game implements ApplicationListener, Tickable {
 		
 		GLTexture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
+		
+		//prefs.putBoolean("isFirstLaunch", true);
+		//prefs.flush();
 		
 		// Start ticking thread
 		clock = new Timer();
@@ -192,7 +194,7 @@ public class Game implements ApplicationListener, Tickable {
 				Texture activeFrame = null;
 				@Override
 				public void render() {
-					if (i < 133) {
+					if (i < 133 && !Gdx.input.isTouched()) {
 						if (Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg").exists())
 							activeFrame = new Texture(Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg"));
 						
