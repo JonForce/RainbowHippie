@@ -13,6 +13,7 @@ public class AssetManager {
 	
 	//GUI
 	public static Texture sign, logo;
+	public static Texture tip1, tip2, tip3;
 	public static Texture pause, pauseWindow, resumeButton, restartButton, quitButton, quitCloud, deathWindow, playAgain, facebook, twitter;
 	public static Texture font;
 	
@@ -40,6 +41,9 @@ public class AssetManager {
 		leg = new Texture(Gdx.files.internal("assets/sprite/leg.png"));
 		openMouth  = new Texture(Gdx.files.internal("assets/sprite/mouth.png"));
 		
+		tip1 = new Texture(Gdx.files.internal("assets/ui/tip1.png"))
+		tip2 = new Texture(Gdx.files.internal("assets/ui/tip2.png"))
+		tip3 = new Texture(Gdx.files.internal("assets/ui/tip3.png"))
 		sign = new Texture(Gdx.files.internal("assets/sprite/signfloat.png"));
 		logo = new Texture(Gdx.files.internal("assets/logo.png"));
 		font = new Texture(Gdx.files.internal("assets/sprite/font.png"));

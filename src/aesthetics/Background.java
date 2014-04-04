@@ -17,7 +17,8 @@ public class Background {
 	public static void load() {
 		bg = new GuiImage(AssetManager.bg, new Vector2(0,0));
 		mountain = new GuiImage(AssetManager.mountain, new Vector2(0,0));
-		rays = new GuiImage(AssetManager.rays, new Vector2(0,0));
+		
+		//rays = new GuiImage(AssetManager.rays, new Vector2(0,0));
 		
 		cloudsA = new RecursiveImage[3];
 		cloudsB = new RecursiveImage[3];

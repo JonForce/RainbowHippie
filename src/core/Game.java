@@ -1,6 +1,7 @@
 package core;
 
 import gui.DeathMenu;
+import gui.Instructions;
 import gui.PauseSign;
 import gui.QuitButton;
 import gui.ScoreCounter;
@@ -130,8 +131,12 @@ public class Game implements ApplicationListener, Tickable {
 	}
 	
 	public void createMenu() {
-		Background.load();
-		hippie = new RainbowHippie();
+		if (prefs.getBoolean("firstLaunch")) {
+			Instructions.start();
+		} else {
+			Background.load();
+			hippie = new RainbowHippie();
+		}
 	}
 	
 	@Override
@@ -147,7 +152,7 @@ public class Game implements ApplicationListener, Tickable {
 		toBeRendered = new ArrayList<Renderable>();
 		toBeTicked = new ArrayList<Tickable>();
 		pausedTicked = new ArrayList<Tickable>();
-
+		
 		GLTexture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		
@@ -195,9 +200,8 @@ public class Game implements ApplicationListener, Tickable {
 						
 						// Generate a texture every 15 frames during intro, until the intro is complete
 						//		then generate the rest of them when needed
-						if (i % 15 == 0) {
+						if (i % 15 == 0 && shouldLoadDuringIntro)
 							RainbowRay.loadAStep();
-						}
 					} else {
 						Game.activeGame.toBeRendered.remove(this);
 						createMenu();
