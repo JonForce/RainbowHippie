@@ -23,11 +23,7 @@ public class Dolphin extends Sprite implements Tickable, Renderable {
 		peakY = 100+Game.generator.nextInt(60);
 		update();
 		
-		Game.activeGame.toBeRendered.remove(Background.cloudsA[0]);
-		Game.activeGame.toBeRendered.remove(Background.cloudsB[0]);
 		Game.activeGame.toBeRendered.add(this);
-		Game.activeGame.toBeRendered.add(Background.cloudsA[0]);
-		Game.activeGame.toBeRendered.add(Background.cloudsB[0]);
 		Game.activeGame.toBeTicked.add(this);
 	}
 	

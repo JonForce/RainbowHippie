@@ -34,9 +34,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Game implements ApplicationListener, Tickable {
 	
-	public static Vector2 screenSize = new Vector2(1200, 700);
-	public static final Vector2 startPosition = new Vector2((Game.screenSize.x/2)-200,(Game.screenSize.y/2)-200);
-	public static final Vector2 center = new Vector2((Game.screenSize.x/2),(Game.screenSize.y/2));
+	public static Vector2 screenSize, startPosition, center;
 	public static Game activeGame;
 	public static Random generator = new Random();
 	public static FPSLogger logger = new FPSLogger();
@@ -48,7 +46,7 @@ public class Game implements ApplicationListener, Tickable {
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
 	public boolean isPaused = false, deathMenuCreated = false;
-	public boolean shouldPlayIntro = true, shouldLoadDuringIntro = true;
+	public boolean shouldPlayIntro = true, shouldLoadDuringIntro = true, introIsFinished = false;
 	public boolean drawInputs = false;
 	
 	public ArrayList<Renderable> toBeRendered;
@@ -65,8 +63,8 @@ public class Game implements ApplicationListener, Tickable {
 		// Use the desktop configuration
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Rainbow Hippie";
-		cfg.width = (int)screenSize.x;
-		cfg.height = (int)screenSize.y;
+		cfg.width = 1200;
+		cfg.height = 700;
 		cfg.resizable = false;
 		cfg.addIcon("assets/website_icon.png", FileType.Internal);
 		cfg.addIcon("assets/taskbar_icon.png", FileType.Internal);
@@ -144,11 +142,14 @@ public class Game implements ApplicationListener, Tickable {
 	public void create() {
 		// Initialization, same for all platforms
 		activeGame = this;
-		prefs = Gdx.app.getPreferences("rh.prefs");
 		screenSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		prefs = Gdx.app.getPreferences("rh.prefs");
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, (int) screenSize.x, (int) screenSize.y);
 		batch = new SpriteBatch();
+		
+		startPosition = new Vector2((Game.screenSize.x/2)-200,(Game.screenSize.y/2)-200);
+		center = new Vector2((Game.screenSize.x/2),(Game.screenSize.y/2));
 
 		toBeRendered = new ArrayList<Renderable>();
 		toBeTicked = new ArrayList<Tickable>();
@@ -156,8 +157,6 @@ public class Game implements ApplicationListener, Tickable {
 		
 		GLTexture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
-		
-		//test = new GuiImage(AssetManager.arm, new Vector2(0,0));
 		
 		//prefs.putBoolean("isFirstLaunch", true);
 		//prefs.flush();
@@ -189,41 +188,52 @@ public class Game implements ApplicationListener, Tickable {
 		//Interpolate the playing of the intro and the loading of the RainbowRay
 		RainbowRay.initialize();
 		if (shouldPlayIntro) {
-			Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/intro/audio/jingle.mp3"));
+			final Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/intro/audio/jingle.mp3"));
 			music.setVolume(.1f);
 			music.setLooping(false);
 			music.play();
 			Renderable r = new Renderable() {
+				double lastTime = getTime();
 				int i = 0;
 				Texture activeFrame = null;
 				@Override
 				public void render() {
+					// If we are not done playing the intro, or the user has not clicked to skip
 					if (i < 133 && !Gdx.input.isTouched()) {
-						if (Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg").exists())
+						if (Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg").exists() && getTime()-lastTime > 15)
 							activeFrame = new Texture(Gdx.files.internal("assets/intro/Frame ("+(i+1)+").jpg"));
 						
-						batch.draw(activeFrame, 0, 0, activeFrame.getWidth()*1.25f, activeFrame.getHeight()*1.3f);
+						batch.draw(activeFrame, 0, 0, screenSize.x, screenSize.y);
 						
 						// Generate a texture every 15 frames during intro, until the intro is complete
 						//		then generate the rest of them when needed
 						if (i % 15 == 0 && shouldLoadDuringIntro)
 							RainbowRay.loadAStep();
 					} else {
+						// Only cut the intro music off abruptly if the user clicked to skip
+						if (Gdx.input.isTouched()) {
+							music.stop();
+							music.dispose();
+						}
+						introIsFinished = true;
 						Game.activeGame.toBeRendered.remove(this);
 						createMenu();
 					}
-					i ++;
+					if (getTime()-lastTime > 15)
+						i ++;
+					lastTime = getTime();
 				}
 			};
 			toBeRendered.add(r);
 		} else {
+			introIsFinished = true;
 			createMenu();
 		}
 	}
 	
 	@Override
 	public void dispose() {
-		
+		toBeTicked.clear();
 	}
 	
 	@Override
@@ -235,9 +245,13 @@ public class Game implements ApplicationListener, Tickable {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
-		for (int i = 0; i <= toBeRendered.size() - 1; i++) {
+		Background.renderBackground();
+		
+		for (int i = 0; i <= toBeRendered.size() - 1; i++)
 			toBeRendered.get(i).render();
-		}
+		
+		if (introIsFinished)
+			Background.renderForeground();
 		
 		if (drawInputs == true)
 			drawInputs();
@@ -270,5 +284,9 @@ public class Game implements ApplicationListener, Tickable {
 			new DeathMenu();
 			deathMenuCreated = true;
 		}
+	}
+	
+	public static double getTime() {
+		return System.nanoTime()*1E-6;
 	}
 }
