@@ -28,6 +28,7 @@ public class AssetManager {
 	//Effects
 	public static Texture gasTrail, rainbow;
 	public static Texture plusOne, minusTwo;
+	public static Texture redCircle, greenCircle;
 	public static Music bgMusic;
 	public static Sound introSong;
 	
@@ -70,6 +71,8 @@ public class AssetManager {
 		dolphin = new Texture(Gdx.files.internal("assets/sprite/dolphin.png"));
 		whale = new Texture(Gdx.files.internal("assets/sprite/whale.png"));
 		
+		redCircle = new Texture(Gdx.files.internal("assets/debugging/redCircle.png"));
+		greenCircle = new Texture(Gdx.files.internal("assets/debugging/greenCircle.png"));
 		gasTrail = new Texture(Gdx.files.internal("assets/sprite/Gas_Trail.png"));
 		rainbow = new Texture(Gdx.files.internal("assets/sprite/rainbow.png"));
 		plusOne = new Texture(Gdx.files.internal("assets/ui/+1.png"));

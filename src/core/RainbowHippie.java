@@ -23,7 +23,6 @@ public class RainbowHippie implements Renderable, Tickable {
 	
 	// Other immutables
 	public final Vector2 hippieSize = new Vector2(AssetManager.fly.getWidth() / 7, AssetManager.fly.getHeight());
-	public final int delayAfterDeath = 50;
 	
 	// Rendering
 	public Texture activeTexture;
@@ -76,18 +75,15 @@ public class RainbowHippie implements Renderable, Tickable {
 				momentum.y += jumpAmount;
 			isRainbowing = Gdx.input.isButtonPressed(Buttons.RIGHT);
 		} else {
-			if (((Gdx.input.isTouched(0) && Gdx.input.getX(0) <= Game.screenSize.x/2) ||
-				(Gdx.input.isTouched(1) && Gdx.input.getX(1) <= Game.screenSize.x/2))) {
-				momentum.y += jumpAmount;
+			isRainbowing = false;
+			for (int input = 0; input != 4; input ++) {
+				if (Gdx.input.isTouched(input)) {
+					if (Gdx.input.getX(input) <= Game.screenSize.x/2)
+						momentum.y += jumpAmount;
+					else
+						isRainbowing = true;
+				}
 			}
-			
-			if (((Gdx.input.isTouched(0) && Gdx.input.getX(0) >= Game.screenSize.x/2) ||
-					(Gdx.input.isTouched(1) && Gdx.input.getX(1) >= Game.screenSize.x/2))) {
-				isRainbowing = true;
-			} else {
-				isRainbowing = false;
-			}
-			
 		}
 		
 		// Update based on state

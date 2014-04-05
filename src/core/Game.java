@@ -1,6 +1,7 @@
 package core;
 
 import gui.DeathMenu;
+import gui.GuiImage;
 import gui.Instructions;
 import gui.PauseSign;
 import gui.QuitButton;
@@ -48,6 +49,7 @@ public class Game implements ApplicationListener, Tickable {
 	public SpriteBatch batch;
 	public boolean isPaused = false, deathMenuCreated = false;
 	public boolean shouldPlayIntro = true, shouldLoadDuringIntro = true;
+	public boolean drawInputs = false;
 	
 	public ArrayList<Renderable> toBeRendered;
 	public ArrayList<Tickable> toBeTicked;
@@ -155,6 +157,8 @@ public class Game implements ApplicationListener, Tickable {
 		GLTexture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		
+		//test = new GuiImage(AssetManager.arm, new Vector2(0,0));
+		
 		//prefs.putBoolean("isFirstLaunch", true);
 		//prefs.flush();
 		
@@ -184,11 +188,11 @@ public class Game implements ApplicationListener, Tickable {
 		
 		//Interpolate the playing of the intro and the loading of the RainbowRay
 		RainbowRay.initialize();
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/intro/audio/jingle.mp3"));
-		music.setVolume(.1f);
-		music.setLooping(false);
-		music.play();
 		if (shouldPlayIntro) {
+			Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/intro/audio/jingle.mp3"));
+			music.setVolume(.1f);
+			music.setLooping(false);
+			music.play();
 			Renderable r = new Renderable() {
 				int i = 0;
 				Texture activeFrame = null;
@@ -235,7 +239,18 @@ public class Game implements ApplicationListener, Tickable {
 			toBeRendered.get(i).render();
 		}
 		
+		if (drawInputs == true)
+			drawInputs();
+		
 		batch.end();
+	}
+	
+	private void drawInputs() {
+		if (Gdx.input.isTouched(0))
+			batch.draw(AssetManager.greenCircle, Gdx.input.getX(0)-(AssetManager.greenCircle.getWidth()/2), screenSize.y-Gdx.input.getY(0)-(AssetManager.greenCircle.getHeight()/2));batch.draw(AssetManager.greenCircle, Gdx.input.getX(0)-(AssetManager.greenCircle.getWidth()/2), screenSize.y-Gdx.input.getY(0)-(AssetManager.greenCircle.getHeight()/2));
+		
+		if (Gdx.input.isTouched(1))
+			batch.draw(AssetManager.greenCircle, Gdx.input.getX(1)-(AssetManager.greenCircle.getWidth()/2), screenSize.y-Gdx.input.getY(1)-(AssetManager.greenCircle.getHeight()/2));batch.draw(AssetManager.greenCircle, Gdx.input.getX(1)-(AssetManager.greenCircle.getWidth()/2), screenSize.y-Gdx.input.getY(1)-(AssetManager.greenCircle.getHeight()/2));
 	}
 	
 	@Override

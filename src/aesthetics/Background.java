@@ -22,8 +22,7 @@ public class Background {
 				Game.activeGame.batch.draw(texture, location.x, location.y, Game.screenSize.x, Game.screenSize.y);
 			}
 		};
-		//mountain = new GuiImage(AssetManager.mountain, new Vector2(0,0));
-		
+		mountain = new GuiImage(AssetManager.mountain, new Vector2(-100,100));
 		//rays = new GuiImage(AssetManager.rays, new Vector2(0,0));
 		
 		cloudsA = new RecursiveImage[3];
