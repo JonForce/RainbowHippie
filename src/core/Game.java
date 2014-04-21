@@ -13,6 +13,7 @@ import java.util.TimerTask;
 
 import objects.Balloon;
 import objects.Barrel;
+import objects.EntitySpawner;
 import aesthetics.Background;
 import aesthetics.Dolphin;
 
@@ -82,6 +83,7 @@ public class Game implements ApplicationListener, Tickable {
 		quitButton = new QuitButton();
 		scoreCounter = new ScoreCounter();
 		entitySpawner = new EntitySpawner();
+		entitySpawner.initialDelay = 40;
 		Background.startMovingClouds();
 		AssetManager.bgMusic.play();
 		
@@ -89,25 +91,24 @@ public class Game implements ApplicationListener, Tickable {
 	}
 	
 	public void restart() {
+		AssetManager.bgMusic.play();
 		Game.activeGame.toBeRendered.add(scoreCounter);
 		scoreCounter.reset();
 		RainbowHippie.activeHippie.reset();
 		deathMenuCreated = false;
 		entitySpawner.reset();
+		entitySpawner.initialDelay = 40;
 		clearEntitys();
 	}
 	
 	public void clearEntitys() {
-		for(int i = 0; i <= toBeTicked.size() - 1; i++) {
+		for(int i = 0; i <= toBeTicked.size() - 1; i ++) {
 			Tickable t = toBeTicked.get(i);
 			if(t instanceof Balloon || t instanceof Barrel || t instanceof Dolphin) {
-				toBeTicked.remove(t);
-			}
-		}
-		for(int i = 0; i <= toBeRendered.size() - 1; i++) {
-			Renderable r = toBeRendered.get(i);
-			if(r instanceof Balloon || r instanceof Barrel || r instanceof Dolphin) {
-				toBeRendered.remove(r);
+				if (toBeTicked.contains(t))
+					toBeTicked.remove(t);
+				if (toBeRendered.contains(t))
+					toBeRendered.remove(t);
 			}
 		}
 	}
@@ -158,9 +159,6 @@ public class Game implements ApplicationListener, Tickable {
 		GLTexture.setEnforcePotImages(false);
 		AssetManager.loadAssets();
 		
-		//prefs.putBoolean("isFirstLaunch", true);
-		//prefs.flush();
-		
 		// Start ticking thread
 		clock = new Timer();
 		clock.scheduleAtFixedRate(new TimerTask() {
@@ -188,22 +186,25 @@ public class Game implements ApplicationListener, Tickable {
 		//Interpolate the playing of the intro and the loading of the RainbowRay
 		RainbowRay.initialize();
 		if (shouldPlayIntro) {
-			double a = getTime();
+			
+			double startTime = getTime();
 			final Texture[] textures = new Texture[133];
 			for (int i = 0; i < 132; i ++) {
 				try {
 					textures[i] = (new Texture(Gdx.files.internal("assets/intro/Frame ("+i+").jpg")));
-					//RainbowRay.loadAStep();
+					if (i % 5 == 0 && shouldLoadDuringIntro)
+						RainbowRay.loadAStep();
 				} catch (GdxRuntimeException e) { }
 			}
-			System.out.println("Time to load rainbow intro textures : " + ((getTime()-a)/1000) + " seconds.");
+			System.out.println("Time to load rainbow intro textures : " + ((getTime()-startTime)/1000) + " seconds.");
+			
 			final Music music = Gdx.audio.newMusic(Gdx.files.internal("assets/intro/audio/jingle.mp3"));
 			music.setVolume(.1f);
 			music.setLooping(false);
 			music.play();
+			
 			Renderable r = new Renderable() {
 				double lastTime = getTime();
-				int iteration = 0;
 				int frame = 0;
 				Texture activeFrame = null;
 				@Override
@@ -227,9 +228,6 @@ public class Game implements ApplicationListener, Tickable {
 							frame ++;
 						}
 						
-						//if (iteration % 50 == 0 && shouldLoadDuringIntro)
-						//	RainbowRay.loadAStep();
-						
 						batch.draw(activeFrame, 0, 0, screenSize.x, screenSize.y);
 					} else {
 						// Only cut the intro music off abruptly if the user clicked to skip
@@ -241,7 +239,6 @@ public class Game implements ApplicationListener, Tickable {
 						Game.activeGame.toBeRendered.remove(this);
 						createMenu();
 					}
-					iteration ++;
 					lastTime = getTime();
 				}
 			};

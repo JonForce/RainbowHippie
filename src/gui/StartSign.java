@@ -44,13 +44,13 @@ public class StartSign extends GuiImage implements Tickable {
 	
 	@Override
 	public void tick() {
-		//This logic gate will run the code within the "if (hasReleased)" statement once per click
+		// This logic gate will run the code within the "if (hasReleased)" statement once per click
 		if (Gdx.input.isTouched() && active) {
 			if (hasReleased) {
-				//Check if the click was in the area of the screen that triggers the start of the game
+				// Check if the click was in the area of the screen that triggers the start of the game
 				if (Gdx.input.getX() >= Game.center.x-100 && Gdx.input.getX() <= Game.center.x+55 &&
 						Game.screenSize.y - Gdx.input.getY() >= Game.center.y-85 && Game.screenSize.y - Gdx.input.getY() <= Game.center.y-10) {
-					//Start the game
+					// Start the game
 					Game.activeGame.start();
 				}
 			}

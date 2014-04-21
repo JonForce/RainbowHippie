@@ -17,12 +17,9 @@ public class Barrel implements Renderable, Tickable {
 	public static final Vector2 BARREL_SIZE = new Vector2(AssetManager.barrel.getWidth(),AssetManager.barrel.getHeight());
 	public static final Random generator = new Random();
 	
+	public float rotation, torque, velocity;
 	public Vector2 location;
-	public float rotation;
 	public Rectangle boundingBox;
-	public float torque;
-	public float velocity;
-	
 	public Sprite sprite;
 	
 	public Barrel(float y) {
@@ -36,6 +33,15 @@ public class Barrel implements Renderable, Tickable {
 		sprite.setOrigin(randomInt(30, 50), randomInt(50, 100));
 		torque = randomInt(7, 20);
 		velocity = randomInt(10, 40);
+	}
+	
+	public void dispose() {
+		Game.activeGame.toBeTicked.remove(this);
+		Game.activeGame.toBeRendered.remove(this);
+	}
+	
+	public boolean isActive() {
+		return Game.activeGame.toBeTicked.contains(this) && Game.activeGame.toBeRendered.contains(this);
 	}
 	
 	@Override
@@ -58,15 +64,13 @@ public class Barrel implements Renderable, Tickable {
 		
 		//Collision check
 		if (boundingBox.overlaps(RainbowHippie.activeHippie.boundingBox)) {
-			Game.activeGame.toBeTicked.remove(this);
-			Game.activeGame.toBeRendered.remove(this);
+			dispose();
 			RainbowHippie.activeHippie.die();
 		}
 		
 		//Dispose if out of screen
 		if (location.x < -100) {
-			Game.activeGame.toBeTicked.remove(this);
-			Game.activeGame.toBeRendered.remove(this);
+			dispose();
 		}
 	}
 	

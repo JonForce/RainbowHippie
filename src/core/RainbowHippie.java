@@ -35,7 +35,7 @@ public class RainbowHippie implements Renderable, Tickable {
 	public Vector2 location, momentum = new Vector2(0, 0);
 	public float damping = .15f;
 	public float rainbowBendModifier = 0;
-	public boolean lockedX = false, lockedY = false;
+	public boolean lockedX = false, lockedY = false, isGurgling = false;
 	public float airResistance = 15f;
 	public float jumpAmount = 2f;
 	public float gravity = -1f;
@@ -70,10 +70,12 @@ public class RainbowHippie implements Renderable, Tickable {
 		boundingBox.setCenter(new Vector2(location.x + hippieSize.x / 2, location.y + hippieSize.y / 2 + 10));
 		
 		if (!usesTouchControls) {
+			// Mouse/Keyboard controls
 			if (Gdx.input.isButtonPressed(Buttons.LEFT))
 				momentum.y += jumpAmount;
 			isRainbowing = Gdx.input.isButtonPressed(Buttons.RIGHT);
 		} else {
+			// Touch controls
 			isRainbowing = false;
 			for (int input = 0; input != 4; input ++) {
 				if (Gdx.input.isTouched(input)) {
@@ -84,6 +86,12 @@ public class RainbowHippie implements Renderable, Tickable {
 				}
 			}
 		}
+		
+		// Start or end gurgling if necessary
+		if (isRainbowing && !isGurgling)
+			startGurgling();
+		else if (!isRainbowing && isGurgling)
+			stopGurgling();
 		
 		// Update based on state
 		if (state == FLYING) {
@@ -121,17 +129,32 @@ public class RainbowHippie implements Renderable, Tickable {
 			sign.visible = true;
 			
 			// Assert that hippie may not move, and that he is at the start position
-			lockedX = true;
-			lockedY = true;
+			lockedX = lockedY = true;
 			location = Game.startPosition;
+			
+			// Assert that momentum isnt being built up
+			momentum.x = momentum.y = 0;
 		}
 		
 		// Assert that our hippie does not leave the playing area
 		assertOnScreen();
 	}
+	
+	public void startGurgling() {
+		isGurgling = true;
+		AssetManager.gurgling.play();
+	}
+	
+	public void stopGurgling() {
+		isGurgling = false;
+		AssetManager.gurgling.stop();
+	}
 
 	public void die() {
 		if (!isDead) {
+			AssetManager.deathSound.play();
+			AssetManager.bgMusic.pause();
+			AssetManager.gameOverSound.play();
 			new FlyingBodyPart(new Vector2(location.x, location.y + 50), FlyingBodyPart.HEAD).velocity = new Vector2(-5, 10);
 			new FlyingBodyPart(new Vector2(location.x, location.y + 10), FlyingBodyPart.BODY).torque = 5f;
 			new FlyingBodyPart(new Vector2(location.x + 20, location.y + 10), FlyingBodyPart.ARM).velocity = new Vector2(-10, 5);
@@ -141,6 +164,7 @@ public class RainbowHippie implements Renderable, Tickable {
 			state = HIDDEN;
 			frame = 0;
 			isDead = true;
+			Game.activeGame.clearEntitys();
 		}
 	}
 	
@@ -168,16 +192,16 @@ public class RainbowHippie implements Renderable, Tickable {
 	 * he is above the top or below the bottom. Called every frame.
 	 */
 	public void assertOnScreen() {
-		if (location.y >= (int) Game.screenSize.y - 199) {
-			location.y = (int) Game.screenSize.y - 200;
+		if (location.y >= Game.screenSize.y - 199) {
+			location.y = Game.screenSize.y - 200;
 			momentum.y = 0;
 			lockedY = true;
-			rainbowBendModifier /= 2;
+			rainbowBendModifier /= 4;
 		} else if (location.y <= 29) {
 			location.y = 30;
 			momentum.y = 0;
 			lockedY = true;
-			rainbowBendModifier /= 2;
+			rainbowBendModifier /= 4;
 		} else {
 			lockedY = false;
 		}

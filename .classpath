@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="gdx-openal.jar"/>
 	<classpathentry kind="lib" path="gdx-setup-ui.jar"/>
 	<classpathentry kind="lib" path="gdx-setup.jar"/>
+	<classpathentry kind="lib" path="AdMob.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

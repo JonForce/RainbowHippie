@@ -64,29 +64,4 @@ public class ScoreCounter implements Renderable {
 	public void reset() {
 		score = 1;
 	}
-	
-	@Deprecated
-	public int score() {
-		return score;
-	}
-	
-	@Deprecated
-	public void add(int amount) {
-		score += amount;
-	}
-	
-	@Deprecated
-	public void subtract(int amount) {
-		score -= amount;
-	}
-	
-	@Deprecated
-	public void addOne() {
-		score ++;
-	}
-	
-	@Deprecated
-	public void subtractOne() {
-		score --;
-	}
 }

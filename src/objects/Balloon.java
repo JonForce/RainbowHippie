@@ -50,15 +50,19 @@ public class Balloon implements Renderable, Tickable {
 	}
 	
 	/**
-	 * If at least half of the balloon is visible on the screen.
+	 * If at least half of the balloon is visible on the screen, and its to the
+	 * right of the player.
 	 */
 	public boolean onScreen() {
-		return (location.x+(activeTexture.getWidth()/7) < Game.screenSize.x);
+		return (location.x+(activeTexture.getWidth()/7) < Game.screenSize.x) && (location.x > Game.activeGame.hippie.location.x+50);
 	}
 	
 	public void pop() {
 		if (!onScreen())
 			return;
+		
+		// Play the popping sound
+		AssetManager.balloonHitSound.play(.075f);
 		
 		if (color.equals(Color.BLACK)) {
 			Game.activeGame.scoreCounter.score -= 2;
@@ -91,6 +95,9 @@ public class Balloon implements Renderable, Tickable {
 		
 		if (RainbowRay.isPopping(this) && RainbowHippie.activeHippie.isRainbowing)
 			pop();
+		
+		if (Game.activeGame.hippie.isDead)
+			dispose();
 		
 		if(location.x < -(AssetManager.balloon.getWidth()/7)) {
 			if (!color.equals(Color.BLACK)) {

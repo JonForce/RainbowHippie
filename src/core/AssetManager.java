@@ -29,8 +29,8 @@ public class AssetManager {
 	public static Texture gasTrail, rainbow;
 	public static Texture plusOne, minusTwo;
 	public static Texture redCircle, greenCircle;
-	public static Music bgMusic;
-	public static Sound introSong;
+	public static Music bgMusic, gurgling, deathSound, gameOverSound;
+	public static Sound balloonHitSound;
 	
 	public static void loadAssets() {
 		fly = new Texture(Gdx.files.internal("assets/sprite/fly.png"));
@@ -76,8 +76,23 @@ public class AssetManager {
 		rainbow = new Texture(Gdx.files.internal("assets/sprite/rainbow.png"));
 		plusOne = new Texture(Gdx.files.internal("assets/ui/+1.png"));
 		minusTwo = new Texture(Gdx.files.internal("assets/ui/-2.png"));
+		
 		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("assets/music/bg.wav"));
-		bgMusic.setVolume(.1f);
+		bgMusic.setVolume(.2f);
 		bgMusic.setLooping(true);
+		
+		gurgling = Gdx.audio.newMusic(Gdx.files.internal("assets/music/rainbowblast.wav"));
+		gurgling.setVolume(.1f);
+		gurgling.setLooping(true);
+		
+		deathSound = Gdx.audio.newMusic(Gdx.files.internal("assets/music/death.wav"));
+		deathSound.setVolume(.3f);
+		deathSound.setLooping(false);
+		
+		gameOverSound = Gdx.audio.newMusic(Gdx.files.internal("assets/music/gameover.wav"));
+		gameOverSound.setVolume(.1f);
+		gameOverSound.setLooping(false);
+		
+		balloonHitSound = Gdx.audio.newSound(Gdx.files.internal("assets/music/balloonhit.mp3"));
 	}
 }

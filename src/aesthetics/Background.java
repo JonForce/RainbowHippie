@@ -16,6 +16,7 @@ public class Background {
 	private static float locationA, locationB, locationC;
 	private static float speedA, speedB, speedC;
 	private static float acceleration = 0, width;
+	private static boolean cloudsAreMoving = false;
 	
 	public static void load() {
 		locationA = locationB = locationC = Game.screenSize.x/2;
@@ -42,34 +43,35 @@ public class Background {
 	}
 	
 	public static void startMovingClouds() {
-		acceleration = -.9f;
-		updater = new Tickable() {
-			@Override
-			public void tick() {
-				acceleration *= .9;
-				
-				// Makes the clouds move slower by layer, giving illusion of depth
-				speedA += acceleration*2;
-				speedB += acceleration*1.5;
-				speedC += acceleration;
-				
-				System.out.println("SpeedA : " + speedA);
-				
-				// There is no reason for the clouds to move in the wrong direction
-				assert speedA > 0 && speedB > 0 && speedC > 0;
-				
-				locationA += speedA;
-				locationB += speedB;
-				locationC += speedC;
-				
-				if (locationA <= 0)
-					locationA = Game.screenSize.x;
-				if (locationB <= 0)
-					locationB = Game.screenSize.x;
-				if (locationC <= 0)
-					locationC = Game.screenSize.x;
-			}
-		};
-		Game.activeGame.toBeTicked.add(updater);
+		if (!cloudsAreMoving) {
+			cloudsAreMoving = true;
+			acceleration = -1.6f;
+			updater = new Tickable() {
+				@Override
+				public void tick() {
+					acceleration *= .9;
+					
+					// Makes the clouds move slower by layer, giving illusion of depth
+					speedA += acceleration*2;
+					speedB += acceleration*1.5;
+					speedC += acceleration;
+					
+					// There is no reason for the clouds to move in the wrong direction
+					assert speedA > 0 && speedB > 0 && speedC > 0;
+					
+					locationA += speedA;
+					locationB += speedB;
+					locationC += speedC;
+					
+					if (locationA <= 0)
+						locationA = Game.screenSize.x;
+					if (locationB <= 0)
+						locationB = Game.screenSize.x;
+					if (locationC <= 0)
+						locationC = Game.screenSize.x;
+				}
+			};
+			Game.activeGame.toBeTicked.add(updater);
+		}
 	}
 }
